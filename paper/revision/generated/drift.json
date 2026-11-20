@@ -1,0 +1,14 @@
+{
+ "clip": {
+  "fisher_video": 0.01680550610575262
+ },
+ "effort": {
+  "fisher_video": 0.06549077313088085
+ },
+ "gend": {
+  "fisher_video": 0.038045594914307056
+ },
+ "biasln": {
+  "fisher_video": 0.3997435047272381
+ }
+}

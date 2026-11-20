@@ -16,3 +16,10 @@ results/
 results_paper/
 results_drive/
 kaggle/_out/
+
+# LaTeX build intermediates
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+paper/**/*.bbl
+paper/**/*.blg

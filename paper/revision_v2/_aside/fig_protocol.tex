@@ -1,0 +1,17 @@
+% Evaluation protocol: clean checkpoint selection vs selection on test-benchmark data
+\begin{tikzpicture}[font=\scriptsize, >=stealth,
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt},
+  good/.style={fill=green!12, draw=green!50!black},
+  bad/.style={fill=red!10, draw=red!60!black}]
+\node[box, fill=blue!8, text width=24mm] (tr) at (0,0) {\textbf{Training}\\FF++ c23 train split\\(DF, F2F, FS, NT)};
+\node[box, text width=20mm] (ep) at (3.5,0) {\textbf{Checkpoints}\\epochs $1,\dots,10$};
+\node[box, good, text width=44mm] (cv) at (8.2,1.25) {\textbf{Clean selection}: AUC on the FF++\\\emph{validation} split (training distribution,\\audited disjoint from every test set)};
+\node[box, bad, text width=44mm] (lv) at (8.2,-1.25) {\textbf{Selection on test-benchmark data}:\\best epoch per test set, or validation\\data drawn from the test datasets};
+\node[box, fill=gray!10, text width=44mm] (te) at (14.3,0) {\textbf{Test} (unseen data)\\Cross-dataset: CDF-v2, DFD, DFDC,\\DFDCP $\rightarrow$ Avg(D)\\Cross-method: 7 DF40 face-swapping\\sets $\rightarrow$ Avg(M)};
+\draw[->] (tr) -- (ep);
+\draw[->] (ep.east) -- ++(0.35,0) |- (cv.west);
+\draw[->] (ep.east) -- ++(0.35,0) |- (lv.west);
+\draw[->, thick, green!50!black] (cv.east) -- node[above, sloped, font=\tiny]{one fixed checkpoint} (te.north west);
+\draw[->, thick, red!60!black] (lv.east) -- node[below, sloped, font=\tiny]{optimistic results} (te.south west);
+\draw[->, dashed, red!60!black] (te.south) |- node[pos=0.75, below, font=\tiny]{test data influence model selection} ($(lv.south)+(0,-0.45)$) -- (lv.south);
+\end{tikzpicture}

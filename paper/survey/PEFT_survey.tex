@@ -1,0 +1,578 @@
+\RequirePackage[table]{xcolor}
+\documentclass[fonts]{icst}
+
+\usepackage{moreverb}
+\usepackage[breaklinks,colorlinks,bookmarksopen,bookmarksnumbered,linkcolor=ICSTblue,citecolor=blue,urlcolor=ICSTblue]{hyperref}
+\usepackage{iftex}
+\ifPDFTeX\usepackage{breakurl}\fi
+\usepackage{doi}
+\usepackage{xurl}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx,flushend}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{dblfloatfix}
+\usepackage[hypcap=false]{caption}
+\usepackage{adjustbox}
+\usepackage{balance}
+
+% numbers shared with the BiasLN revision (tools/paper_assets.py)
+\IfFileExists{generated/numbers.tex}{\input{generated/numbers.tex}}{}
+\newcommand{\num}[1]{\ifcsname #1\endcsname\csname #1\endcsname\else\textcolor{red}{??}\fi}
+\newtheorem{proposition}{Proposition}
+% \todo{...} marks text the authors must still check; remove all before submission.
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\journalname{XXXXXX}
+\articletype{Survey Article}
+\setcounter{page}{01}
+\def\volumeyear{XXXX}
+\def\volumenumber{XX}
+\def\issuemonth{XX-XX}
+\def\issuenumber{X}
+\def\articleid{XX}
+\def\copyrightholder{Xuan-Huy Dinh\textit{ et al.}, licensed to ICST}
+\copyrightnote{This is an open access article distributed under the terms of the Creative Commons Attribution license (\url{http://creativecommons.org/licenses/by/3.0/}), which permits unlimited use, distribution and reproduction in any medium so long as the original work is properly cited.}
+\def\articledoi{10.4108/XX.X.X.XX}
+\received{XXXX}
+\accepted{XXXX}
+\published{XXXX}
+
+\begin{document}
+\runningheads{}{}
+
+\title{Parameter-Efficient Adaptation of Vision Foundation Models for Generalizable Deepfake Detection: A Survey and Controlled Benchmark}
+
+\author{Xuan-Huy Dinh,\ Minh-Duc Vu,\ Thanh-Quan Phung-Le,\ Duc-Thinh Nguyen,\ Van-Dung Hoang\fnoteref{1}}
+
+\address{
+    Faculty of Information Technology\\
+    Ho Chi Minh City University of Technology and Engineering (HCMUTE)\\
+    Ho Chi Minh City, Vietnam
+}
+
+\abstract{
+Detectors built on vision foundation models such as CLIP now dominate cross-dataset deepfake benchmarks, and most of them adapt the frozen encoder with a parameter-efficient fine-tuning (PEFT) scheme: linear probing, tuning of biases or LayerNorm parameters, low-rank or singular-value reparameterization, adapters or prompts. Published comparisons between these schemes, however, mix different training recipes, numbers of frames, test-set averages and, above all, different checkpoint-selection rules, some of which use target-domain data. This survey organizes recent PEFT-based face deepfake detectors into a taxonomy by what they adapt, reviews how they are evaluated, and complements the literature with a controlled benchmark in which eight adaptation schemes on CLIP ViT-L/14 are re-trained with the same data, augmentation, schedule, seeds and a checkpoint-selection rule that never sees test data. The benchmark yields three observations. First, the selection rule shifts the cross-dataset average AUC of one model from 0.934 to 0.923, more than the gap between most methods. Second, bias tuning, LayerNorm tuning and their combination are statistically equivalent (TOST within $\pm0.01$ AUC), which follows from a simple analysis showing that a LayerNorm shift is a tied bias update; the auxiliary feature-space losses of GenD add about one point on unseen face-swapping methods. Third, light adaptation is essential but sufficient: full fine-tuning and linear probing are far below every PEFT scheme, while larger budgets (LoRA), more training frames, weight averaging and multi-layer features do not help. We close with recommendations for evaluation and open problems.
+}
+
+\keywords{Deepfake detection, parameter-efficient fine-tuning, vision foundation models, CLIP, survey, benchmark}
+
+\fnotetext[1]{Corresponding author. Email: \email{dunghv@hcmute.edu.vn}}
+
+\maketitle
+
+% =====================================================================
+\section{Introduction}
+
+Face manipulation with GANs~\cite{goodfellow2020gan} and diffusion models~\cite{yang2022diffusion} has made realistic forged videos easy to produce, and detecting them is now a standard problem in media forensics~\cite{pei2024survey,liu2024evolving}. The central difficulty is generalization: a detector trained on one dataset, typically FaceForensics++ (FF++)~\cite{rossler2019ff}, must recognize forgeries produced by other pipelines, under other compression and capture conditions. Detectors that rely on low-level, method-specific artifacts degrade sharply on such shifts~\cite{qian2020frequency,luo2021srm,yan2023deepfakebench}.
+
+Large pre-trained vision encoders changed this picture. Features of CLIP~\cite{radford2021clip_vitl} separate real from generated images surprisingly well even without training~\cite{ojha2023universal,tsai2024trainingfree}, and the best cross-dataset results are now obtained by adapting such an encoder rather than training a detector from scratch~\cite{yan2025effort,yermakov2025gend,cui2025forada}. Because full fine-tuning distorts the pre-trained features~\cite{kumar2022finetuning}, nearly all of these detectors use some form of parameter-efficient fine-tuning (PEFT): they freeze most of the encoder and train a small set of parameters, added modules or prompts.
+
+The number of such methods has grown quickly, but comparing them is hard. Each paper reports numbers from its own training recipe, test-set average and, most importantly, checkpoint-selection rule; several of these rules use data from the test benchmarks (Sec.~\ref{sec:eval}). Differences of a few tenths of a point, often reported from a single run, are then interpreted as methodological progress.
+
+This survey addresses both aspects. Our contributions are:
+\begin{enumerate}
+    \item \textbf{A taxonomy} of PEFT-based face deepfake detectors by what they adapt: nothing (probing), a subset of existing parameters, a reparameterization of the weights, added modules or prompts, the training objective, or the weights after training (Sec.~\ref{sec:taxonomy}).
+    \item \textbf{A review of evaluation practice}, identifying checkpoint selection, test-set averaging and single-seed reporting as the main sources of incomparability (Sec.~\ref{sec:eval}).
+    \item \textbf{A controlled benchmark} of eight adaptation schemes and more than fifty configurations on CLIP ViT-L/14, all re-trained with one pipeline, three seeds and selection on the FF++ validation split only, with paired significance and equivalence tests and measured training and inference costs (Sec.~\ref{sec:bench}).
+    \item \textbf{An analysis} of the per-channel affine schemes (bias and LayerNorm tuning) that explains why they perform alike (Sec.~\ref{sec:analysis}), and practical recommendations (Sec.~\ref{sec:recommend}).
+\end{enumerate}
+Code, configurations and all per-run results are available at \href{https://github.com/dinhxuanhuy/BiasLN}{https://github.com/dinhxuanhuy/BiasLN}.
+
+% =====================================================================
+\section{Background}
+\label{sec:background}
+
+\subsection{Problem setting and benchmarks}
+Most face deepfake detectors operate on face crops extracted from video frames and output a fake probability per frame; a video score is the mean over frames. The common training source is FF++ (c23)~\cite{rossler2019ff}, which contains four manipulations (Deepfakes, Face2Face, FaceSwap, NeuralTextures). Generalization is measured \emph{cross-dataset}, on Celeb-DF-v2 (CDF-v2)~\cite{li2020celeb}, DeepFakeDetection (DFD)~\cite{dufour2019dfd}, the DFDC preview (DFDCP)~\cite{dolhansky2019dfdcp} and DFDC~\cite{dolhansky2020dfdc}, and \emph{cross-method}, on forgeries produced by newer generators applied to the same identities, as collected in DF40~\cite{yan2024df40}. DeepfakeBench~\cite{yan2023deepfakebench} standardized pre-processing (face detection, alignment, $1.3\times$ crop) and provides re-implementations of many detectors. Performance is reported as frame- or video-level AUC.
+
+\subsection{Vision foundation models}
+CLIP~\cite{radford2021clip_vitl} trains an image and a text transformer contrastively on 400M image--text pairs; its ViT-L/14 image encoder (303M parameters, 24 blocks) is the most common backbone in recent detectors. Self-supervised encoders such as DINO~\cite{caron2021emerging} are also used~\cite{zhang2026dino,zou2026clipdino}. Each transformer block applies a pre-norm LayerNorm, multi-head self-attention with query, key, value and output projections, a second LayerNorm and a two-layer MLP (fc1, fc2); all linear layers have biases.
+
+\subsection{Parameter-efficient fine-tuning}
+PEFT methods adapt a frozen pre-trained network with few trainable parameters. \emph{Selective} methods train an existing subset, such as all biases (BitFit~\cite{benzaken2022bitfit}) or the LayerNorm affine parameters~\cite{wang2022ln,giannou2023layernorm,valizadeh2024layernorm}. \emph{Reparameterization} methods add a low-rank update to frozen weights (LoRA~\cite{hu2022lora}) or tune part of a decomposition. \emph{Additive} methods insert small modules (adapters) or learnable input tokens (prompts). Selective and merged reparameterized updates leave the inference cost unchanged; unmerged reparameterizations and additive modules do not.
+
+% =====================================================================
+\section{Taxonomy of PEFT-Based Deepfake Detectors}
+\label{sec:taxonomy}
+
+Table~\ref{tab:taxonomy} summarizes the methods discussed in this section. We group them by \emph{what} they adapt, which determines the number of trainable parameters, the inference cost and, as Sec.~\ref{sec:bench} shows, much of their behavior.
+
+\begin{table*}[!t]
+\centering
+\caption{Taxonomy of adaptation schemes for foundation-model deepfake detectors. ``Infer.'' indicates whether the scheme changes the inference cost of the frozen encoder. Methods marked $\ast$ are re-trained in our benchmark (Sec.~\ref{sec:bench}).}
+\label{tab:taxonomy}
+\footnotesize
+\begin{tabular}{p{0.17\textwidth} p{0.30\textwidth} p{0.08\textwidth} p{0.35\textwidth}}
+\toprule
+\textbf{Category} & \textbf{What is adapted} & \textbf{Infer.} & \textbf{Representative methods} \\
+\midrule
+Probing & Nothing; a head on frozen features & same & UnivFD~\cite{ojha2023universal}$^\ast$, training-free scoring~\cite{tsai2024trainingfree}, patch-token probes~\cite{abdullah2026tap} \\
+Selective tuning & An existing subset: biases, LayerNorm, chosen blocks & same & BitFit~\cite{benzaken2022bitfit}$^\ast$, LayerNorm tuning (GenD)~\cite{yermakov2025gend}$^\ast$, BiasLN$^\ast$, BPL~\cite{xu2026bpl}, layer masking~\cite{zhang2026layermask} \\
+Reparameterization & Low-rank or singular-value residuals of frozen weights & same if merged & LoRA~\cite{hu2022lora}$^\ast$, MoE of LoRA experts~\cite{liu2024mole}, Effort (SVD)~\cite{yan2025effort}$^\ast$, subspace methods~\cite{chen2026envsubspace} \\
+Additive modules & Adapters or side networks next to the encoder & higher & Forensics Adapter~\cite{cui2025forada}, dual-stream adapter~\cite{liao2026dfa}, temporal component adapter~\cite{han2024fcg} \\
+Prompts / text & Learnable visual or textual tokens & slightly higher & RepDFD~\cite{lin2025repdfd}, AdaptPrompt~\cite{jiang2026adaptprompt}, separable prompts~\cite{yang2026separable} \\
+Objective & Losses on the feature space added to CE & same & GenD alignment/uniformity~\cite{yermakov2025gend}$^\ast$, shortcut suppression~\cite{wang2026shortcut}, dual supervision~\cite{zhang2026dino} \\
+Post-hoc & Averaging of trained weights & same & model soups~\cite{wortsman2022soups}$^\ast$, WiSE-FT~\cite{wortsman2022wiseft}$^\ast$ \\
+Full fine-tuning & All weights & same & baseline$^\ast$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Probing frozen features}
+Ojha et al.~\cite{ojha2023universal} showed that a nearest-neighbor or linear classifier on frozen CLIP features generalizes across generators far better than detectors trained end to end. Training-free variants score images by the stability of their foundation-model features under perturbations~\cite{tsai2024trainingfree}, and patch-token probes exploit features below the class token~\cite{abdullah2026tap}. Probing is cheap and immune to forgetting, but for face forgeries, where the manipulation is local and subtle, frozen features leave much of the attainable accuracy unused (Sec.~\ref{sec:bench}).
+
+\subsection{Selective tuning}
+Selective methods train a subset of the existing parameters and therefore add no inference cost. Yermakov et al.~\cite{yermakov2025clip,yermakov2025gend} tune only the LayerNorm parameters of CLIP and report strong results across several benchmarks; their ablation also finds bias tuning close to LayerNorm tuning. BPL~\cite{xu2026bpl} tunes only biases and trains on mined real--fake pairs. Zhang et al.~\cite{zhang2026layermask} select which layers to adapt according to forgery-relevant activations. Bias and LayerNorm tuning are attractive because they change only per-channel offsets and scales of the frozen computation; Sec.~\ref{sec:analysis} makes precise how the two overlap.
+
+\subsection{Reparameterization}
+LoRA~\cite{hu2022lora} adds a trainable low-rank product to frozen weight matrices; Liu et al.~\cite{liu2024mole} combine several LoRA experts for transferable AI-generated image detection. Effort~\cite{yan2025effort} decomposes each attention projection by singular-value decomposition, freezes the principal components and tunes a small residual subspace, with an orthogonality constraint that preserves the pre-trained knowledge. Related subspace methods separate forgery-specific from environment-specific directions~\cite{chen2026envsubspace,zhang2026layermask}. These schemes can be merged into the weights after training; implementations that rebuild the weights at every forward pass add latency (Sec.~\ref{sec:cost}).
+
+\subsection{Additive modules and prompts}
+Forensics Adapter (ForAda)~\cite{cui2025forada} attaches a lightweight adapter network to CLIP that learns blending boundaries and interacts with the frozen encoder; Liao et al.~\cite{liao2026dfa} use a dual-stream variant. For video, Han et al.~\cite{han2024fcg} insert a temporal adapter guided by facial components. Prompt-based methods keep the encoder fixed and learn input tokens: RepDFD~\cite{lin2025repdfd} reprograms CLIP through input perturbations and face-aware text prompts, AdaptPrompt~\cite{jiang2026adaptprompt} learns visual and textual prompts, and Yang et al.~\cite{yang2026separable} exploit the text encoder with separable prompts. These methods add capacity outside the encoder, at the price of extra inference computation.
+
+\subsection{Objectives on the feature space}
+Several methods keep a simple adaptation but change the loss. GenD~\cite{yermakov2025gend} normalizes the features onto the hypersphere and adds alignment and uniformity losses~\cite{wang2020alignment}. Other works suppress forgery-specific shortcuts~\cite{wang2026shortcut} or supervise both real/fake labels and finer forgery categories on a DINO backbone~\cite{zhang2026dino}. In our benchmark the objective is the main factor that separates otherwise equivalent selective schemes (Sec.~\ref{sec:bench}).
+
+\subsection{Post-hoc weight averaging}
+Averaging the weights of several fine-tuned models (model soups~\cite{wortsman2022soups}) or interpolating between pre-trained and fine-tuned weights (WiSE-FT~\cite{wortsman2022wiseft}) improves robustness in image classification without extra inference cost. Their effect on PEFT deepfake detectors has not been studied; we include both in the benchmark.
+
+\subsection{Beyond the encoder adaptation}
+Data-centric methods synthesize training forgeries such as self-blended images~\cite{shiohara2022sbi,chen2022sladd,lin2024cdfa} and are complementary to all categories above. Design choices of the training pipeline (number of epochs, augmentation) can matter as much as the architecture~\cite{pellegrini2025design}, and intermediate encoder layers can generalize better than the last one~\cite{park2025mold}. Recent studies also report clear cross-domain limits of foundation-model detectors~\cite{delibasoglu2026limits}.
+
+% =====================================================================
+\section{How Methods Are Evaluated}
+\label{sec:eval}
+
+\subsection{Checkpoint selection}
+For a detector trained on FF++, the epoch whose checkpoint is reported strongly affects cross-dataset numbers, because in-domain and out-of-domain accuracy do not peak together. Practices differ:
+\begin{itemize}[leftmargin=*, topsep=2pt, itemsep=2pt, label=--]
+    \item The DeepfakeBench trainer~\cite{yan2023deepfakebench}, on which several detectors build, evaluates every test dataset after each epoch and keeps a best checkpoint \emph{per test dataset}.
+    \item GenD~\cite{yermakov2025gend} selects on a custom validation set drawn from several datasets, some of which are also test benchmarks (with disjoint samples).
+    \item Many papers do not state the rule.
+\end{itemize}
+Selection on target-domain data turns a part of the test benchmark into a validation set. Sec.~\ref{sec:bench} quantifies the effect for one model.
+
+\subsection{Averages, frames and seeds}
+Cross-dataset averages are computed over different dataset sets (with or without UADFV, for example), so averages from different papers are not comparable even when the per-dataset numbers are. Frame- and video-level AUC are mixed, and the number of training frames per video varies from 8 to all 32 extracted frames. Finally, most methods are reported from a single training run, while our runs show seed-to-seed standard deviations of about 0.005 AUC for the cross-dataset average, larger than many reported improvements.
+
+% =====================================================================
+\section{Controlled Benchmark}
+\label{sec:bench}
+
+\subsection{Protocol}
+All configurations use CLIP ViT-L/14 with an $L_2$-normalized class token and a linear head, trained on FF++ c23 (official 720/140/140 split, 8 evenly spaced frames per video unless stated) with the DeepfakeBench pre-processing and augmentation (flip, rotation, blur, colour jitter, JPEG). Training runs for 10 epochs with Adam, cosine learning-rate decay and batch size 32 in bfloat16 on one A100. \textbf{Every checkpoint is selected by frame AUC on the FF++ validation split}, which shares no video or frame with any test set. Testing uses all 32 frames per video and reports video AUC; Avg(D) is the mean over CDF-v2, DFD, DFDC and DFDCP, and Avg(M) over the seven DF40 face-swapping sets (UniFace, BlendFace, E4S, FaceDancer, FSGAN, InSwap, SimSwap) applied to FF++ identities. Main configurations are run with seeds 1024, 1 and 2; we report the mean and sample standard deviation and compare methods with a paired $t$-test over seeds and a two one-sided tests (TOST) equivalence test with a margin of $\pm0.01$ AUC.
+
+Re-trained schemes: linear probe; full fine-tuning (encoder learning rate $10^{-5}$); BitFit (all biases, including LayerNorm shifts); LayerNorm tuning; BiasLN (biases and LayerNorm scales); LoRA ($r{=}8$ on query and value); Effort (rank-1 SVD residual on all attention projections, following its released code); and GenD (LayerNorm tuning with alignment and uniformity losses, following its released code).
+
+\subsection{Effect of the selection rule}
+The same BiasLN configuration reaches an Avg(D) of 0.934 when its checkpoint is selected on a subset of CDF-v2 and \num{AvgDBiasln} when selected on FF++ validation. This difference of about one point exceeds the gap between all PEFT schemes in Table~\ref{tab:main}. Selection on FF++ validation is itself imperfect: its AUC saturates above 0.98 and does not rank checkpoints by their cross-dataset accuracy, so a validation set built from non-test sources is an open need (Sec.~\ref{sec:open}).
+
+\begin{table*}[!t]
+\centering
+\caption{Video AUC of re-trained schemes under one protocol (FF++ c23 training, checkpoint selected on FF++ validation). Avg(D) and Avg(M) are mean $\pm$ std over $n$ seeds; per-dataset values are seed means. Bold: best; shaded: second best.}
+\label{tab:main}
+\resizebox{\textwidth}{!}{\input{generated/tab_main.tex}}
+\vspace{3mm}
+\caption{Ablation of selective and low-rank schemes and of $L_2$ normalization before the classifier (same protocol). Bold: best; shaded: second best.}
+\label{tab:ablation}
+\resizebox{0.85\textwidth}{!}{\input{generated/tab_ablation.tex}}
+\end{table*}
+
+\subsection{Comparison of adaptation schemes}
+Table~\ref{tab:main} and Table~\ref{tab:ablation} give the main results.
+\textbf{Adaptation is essential but light.} The linear probe reaches only \num{AvgDLinprobe} Avg(D) and full fine-tuning \num{AvgDFullft}, whereas every PEFT scheme lies between 0.90 and 0.93.
+\textbf{Selective schemes are equivalent.} Bias tuning (\num{AvgDBitfit}), LayerNorm tuning (\num{AvgDLnLC}) and BiasLN (\num{AvgDBiasln}) differ by less than the seed-to-seed variation. Paired over seeds, BiasLN and bias tuning are statistically equivalent within $\pm0.01$ AUC on both averages (TOST $p=0.002$ for Avg(D), $p=0.019$ for Avg(M)).
+\textbf{The objective matters more than the parameter set.} GenD, which tunes the same LayerNorm parameters but adds alignment and uniformity losses, has the best averages; its Avg(D) is not significantly different from BiasLN ($-0.002$, $p=0.57$), but it is better on Avg(M) by about one point ($p=0.049$).
+\textbf{More parameters do not help.} LoRA trains $2.4\times$ more parameters than BiasLN and is not better; Effort is about one point below the selective schemes on Avg(D) ($p=0.10$ against BiasLN) and equivalent on Avg(M).
+
+\subsection{Which parameters to tune}
+Table~\ref{tab:roles} splits the tuned set by role, and Table~\ref{tab:depth} by depth. No single role is clearly better: query and fc1 biases, the residual-stream biases (value, output, fc2), LayerNorm scales or shifts alone all reach 0.914--0.921 Avg(D). Depth matters more. Tuning only six or twelve blocks loses one to three points, wherever the blocks are; tuning blocks 0--18 matches tuning all 24 blocks with 20\% fewer parameters. A gradient profile confirms that the key biases receive exactly zero gradient (Proposition~\ref{prop:key}) and that the last blocks receive the smallest updates.
+
+\begin{table}[!t]
+\centering
+\caption{Tuned subset inside BiasLN ($L_2$ normalization, cross-entropy). Video AUC, mean $\pm$ std over $n$ seeds.}
+\label{tab:roles}
+\resizebox{\columnwidth}{!}{\input{generated/tab_roles.tex}}
+\end{table}
+
+\begin{table}[!t]
+\centering
+\caption{Depth of adaptation: BiasLN restricted to a range of transformer blocks (24 in total). Seed 1024 unless $n$ is given.}
+\label{tab:depth}
+\footnotesize
+\begin{tabular}{l r c c c}
+\toprule
+\textbf{Blocks} & \textbf{Params} & $n$ & \textbf{Avg(D)} & \textbf{Avg(M)} \\
+\midrule
+0--5 & 86k & 1 & 0.894 & 0.939 \\
+18--23 & 86k & 1 & 0.885 & 0.945 \\
+0--11 & 166k & 1 & 0.904 & 0.946 \\
+12--23 & 166k & 1 & 0.891 & 0.939 \\
+12--18 & 99k & 1 & 0.903 & 0.945 \\
+6--17 & 166k & 3 & 0.919\,{\scriptsize$\pm$0.002} & 0.966\,{\scriptsize$\pm$0.004} \\
+0--18 & 259k & 3 & 0.923\,{\scriptsize$\pm$0.004} & 0.960\,{\scriptsize$\pm$0.005} \\
+0--23 (all) & 326k & 3 & 0.923\,{\scriptsize$\pm$0.006} & 0.957\,{\scriptsize$\pm$0.005} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Optimization, data and weight averaging}
+Table~\ref{tab:extra} collects variants that change the training or post-processing rather than the tuned set. Raising the learning rate of the LayerNorm scales by $3\times$ improves Avg(M) of BiasLN by 0.007 consistently over three seeds ($p\approx0.06$) without changing Avg(D), so the scales contribute only when they are allowed to move; a $10\times$ rate hurts. Training on all 32 frames per video (115k images instead of 29k) helps neither BiasLN nor GenD. Concatenating class tokens from blocks 12, 18 and 24 does not help. Uniform averaging of the last epochs or of three seeds changes the averages by less than the seed variation, and WiSE-FT interpolation with the pre-trained weights collapses (Avg(D) 0.82--0.86) because the linear head no longer matches the interpolated features.
+
+\begin{table}[!t]
+\centering
+\caption{Training and post-hoc variants (video AUC). Seed 1024 unless $n$ is given. Soups average seeds 1024, 1 and 2.}
+\label{tab:extra}
+\footnotesize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Variant} & $n$ & \textbf{Avg(D)} & \textbf{Avg(M)} \\
+\midrule
+BiasLN (reference) & 3 & 0.923\,{\scriptsize$\pm$0.006} & 0.957\,{\scriptsize$\pm$0.005} \\
+LN-scale lr $\times3$ & 3 & 0.921\,{\scriptsize$\pm$0.004} & 0.964\,{\scriptsize$\pm$0.003} \\
+LN-scale lr $\times10$ & 1 & 0.904 & 0.961 \\
+Multi-layer CLS (12+18+24) & 1 & 0.917 & 0.959 \\
+Blocks 0--18, 8 frames & 1 & 0.924 & 0.956 \\
+Blocks 0--18, 32 frames & 1 & 0.917 & 0.959 \\
+GenD, 8 frames & 1 & 0.925 & 0.966 \\
+GenD, 32 frames & 1 & 0.924 & 0.963 \\
+Seed soup, BiasLN & -- & 0.920 & 0.939 \\
+Seed soup, GenD & -- & 0.927 & 0.966 \\
+Epoch soup ($\geq5$), BiasLN & 2 & 0.921\,{\scriptsize$\pm$0.004} & 0.962\,{\scriptsize$\pm$0.004} \\
+WiSE-FT $\alpha{=}0.5$, BiasLN & -- & 0.826 & 0.830 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Computational cost}
+\label{sec:cost}
+Table~\ref{tab:cost} reports measured costs. Training costs of all PEFT schemes are within 15\% of each other, because back-propagation through the frozen 24-block encoder dominates; full fine-tuning needs 62\% more memory. The schemes differ at inference: selective tuning keeps the cost of the frozen encoder (162 GFLOPs per image), while Effort and unmerged LoRA rebuild or add weights in every forward pass.
+
+\begin{table}[!t]
+\centering
+\caption{Measured cost on an NVIDIA A100-40GB (fp32, $224\times224$). Train: batch 32, forward + backward + Adam step. Infer: batch 1. Ckpt: size of the stored trainable tensors.}
+\label{tab:cost}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l r r r r r r}
+\toprule
+\textbf{Method} & \textbf{Trainable} & \textbf{Ckpt} & \textbf{Train} & \textbf{Train} & \textbf{Infer} & \textbf{GFLOPs} \\
+ & & \textbf{(MB)} & \textbf{img/s} & \textbf{mem (GB)} & \textbf{ms} & \\
+\midrule
+Linear probe & 0.002M & 0.0 & 100.6 & 1.67 & 17.0 & 162.0 \\
+LayerNorm (GenD) & 0.104M & 0.4 & 47.1 & 12.16 & 17.1 & 162.0 \\
+Effort & 0.199M & 0.8 & 41.7 & 13.22 & 23.8 & 162.2 \\
+BitFit & 0.274M & 1.1 & 46.6 & 12.16 & 17.1 & 162.0 \\
+BiasLN & 0.326M & 1.3 & 46.5 & 12.16 & 17.2 & 162.0 \\
+LoRA $r{=}8$ & 0.788M & 3.0 & 45.9 & 12.87 & 18.6 & 162.4 \\
+Full FT & 303.2M & 1156.7 & 32.8 & 19.72 & 17.2 & 162.0 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% =====================================================================
+\section{Why Affine Schemes Behave Alike}
+\label{sec:analysis}
+
+Bias tuning, LayerNorm tuning and their union act on the same per-channel quantities. Two facts make this precise.
+
+\begin{proposition}[Key bias is redundant~\cite{namazifar2023bias}]
+\label{prop:key}
+In softmax attention with scores $s_{ij}=\mathbf{q}_i^\top(\mathbf{W}_k\mathbf{u}_j+\mathbf{b}_k)/\sqrt{d}$, the term $\mathbf{q}_i^\top\mathbf{b}_k/\sqrt{d}$ is the same for every key $j$ and cancels in the softmax; hence $\partial\mathcal{L}/\partial\mathbf{b}_k=\mathbf{0}$.
+\end{proposition}
+
+\begin{proposition}[LayerNorm shift is a tied bias update]
+\label{prop:fold}
+In a pre-norm block, changing the shift of a LayerNorm by $\Delta\boldsymbol{\beta}$ changes the following linear layer exactly as changing its bias by $\mathbf{W}\Delta\boldsymbol{\beta}$, since $\mathbf{W}(\boldsymbol{\gamma}\odot\hat{\mathbf{u}}+\boldsymbol{\beta}+\Delta\boldsymbol{\beta})+\mathbf{b}=\mathbf{W}(\boldsymbol{\gamma}\odot\hat{\mathbf{u}}+\boldsymbol{\beta})+(\mathbf{b}+\mathbf{W}\Delta\boldsymbol{\beta})$.
+\end{proposition}
+
+Consequently, LayerNorm-shift tuning is contained in bias tuning, and the LayerNorm scales $\boldsymbol{\gamma}$ are the only per-channel multiplicative parameters. All three schemes adapt the frozen encoder mainly through shifts of pre-activations, which explains their equivalence in Table~\ref{tab:ablation}; the scales add measurable value only with a larger learning rate (Table~\ref{tab:extra}). Since the choice among these parameter sets matters little, improvements must come from elsewhere: the objective, the training data or the selection rule.
+
+% =====================================================================
+\section{Recommendations}
+\label{sec:recommend}
+\begin{enumerate}[leftmargin=*, topsep=2pt, itemsep=2pt]
+    \item \textbf{State and fix the selection rule}, and never select on data from a test benchmark. Report the selected epoch.
+    \item \textbf{Report several seeds} with standard deviations, and test differences with paired or equivalence tests; differences below about 0.01 Avg(D) are within seed noise for CLIP ViT-L/14 on FF++.
+    \item \textbf{Re-train baselines} under the same pipeline instead of copying published numbers, and label copied numbers as not comparable.
+    \item \textbf{Fix the test-set average} (we follow Effort~\cite{yan2025effort}: CDF-v2, DFD, DFDC, DFDCP) and report per-dataset video AUC.
+    \item \textbf{Report measured costs}, including inference latency; parameter counts alone hide the cost of unmerged reparameterizations and added modules.
+    \item As a strong and simple baseline, \textbf{tune the per-channel affine parameters} (biases or LayerNorm) of the first three quarters of the encoder.
+\end{enumerate}
+
+% =====================================================================
+\section{Open Problems}
+\label{sec:open}
+\textbf{Validation without test leakage.} FF++ validation saturates; a validation set built from manipulations that are not used for testing (for example, the reenactment subsets of DF40) could select better checkpoints without leakage.
+\textbf{Objectives and data.} The benchmark suggests that further gains come from the training objective or synthetic training forgeries~\cite{shiohara2022sbi} rather than from the parameter set; their interaction with PEFT remains to be measured under a common protocol.
+\textbf{Temporal information.} Frame-based detectors ignore motion; temporal adapters~\cite{han2024fcg} add modules, and simple temporal pooling of PEFT features is unexplored.
+\textbf{Deployment.} A ViT-L/14 encoder needs 162 GFLOPs per image; distillation into smaller encoders and robustness to real-world post-processing are needed for practical use.
+
+% =====================================================================
+\section{Conclusion}
+We reviewed parameter-efficient adaptation of vision foundation models for face deepfake detection and complemented the literature with a controlled benchmark. Under a common, leakage-free protocol, the many selective and low-rank schemes proposed for this task perform within about one point of each other, and the per-channel affine schemes are statistically equivalent, as a short analysis predicts. Evaluation choices, in particular checkpoint selection, change reported results as much as the methods do. We hope that the taxonomy, the released protocol and the per-run results help future work compare methods on equal terms.
+
+\todo{Authors: confirm venue and article type with the editor before submission; check every reference below once more.}
+
+\begin{thebibliography}{99}
+\balance
+
+\bibitem{goodfellow2020gan}
+Goodfellow I, Pouget-Abadie J, Mirza M, Xu B, Warde-Farley D, Ozair S, Courville A, Bengio Y.
+Generative adversarial networks.
+Commun ACM. 2020;63(11):139--44.
+
+\bibitem{yang2022diffusion}
+Yang L, Zhang Z, Song Y, Hong S, Xu R, Zhao Y, Zhang W, Cui B, Yang MH.
+Diffusion models: A comprehensive survey of methods and applications.
+ACM Comput Surv. 2023;56(4):1--39.
+
+\bibitem{pei2024survey}
+Pei G, Zhang J, Hu M, Zhang Z, Wang C, Wu Y, Zhai G, Yang J, Tao D.
+Deepfake generation and detection: A benchmark and survey.
+ACM Comput Surv. arXiv:2403.17881. 2024.
+
+\bibitem{liu2024evolving}
+Liu P, Tao Q, Zhou JT.
+Evolving from single-modal to multi-modal facial deepfake detection: Progress and challenges.
+arXiv preprint arXiv:2406.06965. 2024.
+
+\bibitem{rossler2019ff}
+R{\"o}ssler A, Cozzolino D, Verdoliva L, Riess C, Thies J, Nie{\ss}ner M.
+FaceForensics++: Learning to detect manipulated facial images.
+In: Proc IEEE/CVF Int Conf Comput Vis (ICCV). 2019.
+
+\bibitem{qian2020frequency}
+Qian Y, Yin G, Sheng L, Chen Z, Shao J.
+Thinking in frequency: Face forgery detection by mining frequency-aware clues.
+In: Proc Eur Conf Comput Vis (ECCV). 2020.
+
+\bibitem{luo2021srm}
+Luo Y, Zhang Y, Yan J, Liu W.
+Generalizing face forgery detection with high-frequency features.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2021.
+
+\bibitem{yan2023deepfakebench}
+Yan Z, Zhang Y, Yuan X, Lyu S, Wu B.
+DeepfakeBench: A comprehensive benchmark of deepfake detection.
+Adv Neural Inf Process Syst (NeurIPS), Datasets and Benchmarks Track. 2023;36:4534--65.
+
+\bibitem{radford2021clip_vitl}
+Radford A, Kim JW, Hallacy C, Ramesh A, Goh G, Agarwal S, et al.
+Learning transferable visual models from natural language supervision.
+In: Proc Int Conf Mach Learn (ICML). 2021;8748--63.
+
+\bibitem{ojha2023universal}
+Ojha U, Li Y, Lee YJ.
+Towards universal fake image detectors that generalize across generative models.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2023;24480--9.
+
+\bibitem{tsai2024trainingfree}
+Tsai CT, Ko CY, Chung IH, Wang YCF, Chen PY.
+Understanding and improving training-free AI-generated image detections with vision foundation models.
+arXiv preprint arXiv:2411.19117. 2024.
+
+\bibitem{yan2025effort}
+Yan Z, Wang J, Jin P, Zhang KY, Liu C, Chen S, Yao T, Ding S, Wu B, Yuan L.
+Orthogonal subspace decomposition for generalizable AI-generated image detection.
+In: Proc Int Conf Mach Learn (ICML). 2025.
+
+\bibitem{yermakov2025gend}
+Yermakov A, Cech J, Matas J, Fritz M.
+Deepfake detection that generalizes across benchmarks.
+In: Proc IEEE/CVF Winter Conf Appl Comput Vis (WACV). 2026;773--83.
+
+\bibitem{yermakov2025clip}
+Yermakov A, Cech J, Matas J.
+Unlocking the hidden potential of CLIP in generalizable deepfake detection.
+arXiv preprint arXiv:2503.19683. 2025.
+
+\bibitem{cui2025forada}
+Cui X, Li Y, Zhu D, Zhou J, Dong J, Lyu S.
+Forensics Adapter: Adapting CLIP for generalizable face forgery detection.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2025;19207--17.
+
+\bibitem{kumar2022finetuning}
+Kumar A, Raghunathan A, Jones R, Ma T, Liang P.
+Fine-tuning can distort pretrained features and underperform out-of-distribution.
+In: Int Conf Learn Represent (ICLR). 2022.
+
+\bibitem{li2020celeb}
+Li Y, Yang X, Sun P, Qi H, Lyu S.
+Celeb-DF: A large-scale challenging dataset for deepfake forensics.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2020;3207--16.
+
+\bibitem{dufour2019dfd}
+Dufour N, Gully A.
+Contributing data to deepfake detection research.
+Google Research Blog. 2019.
+
+\bibitem{dolhansky2019dfdcp}
+Dolhansky B, Howes R, Pflaum B, Baram N, Ferrer CC.
+The deepfake detection challenge (DFDC) preview dataset.
+arXiv preprint arXiv:1910.08854. 2019.
+
+\bibitem{dolhansky2020dfdc}
+Dolhansky B, Bitton J, Pflaum B, Lu J, Howes R, Wang M, Ferrer CC.
+The DeepFake Detection Challenge (DFDC) dataset.
+arXiv preprint arXiv:2006.07397. 2020.
+
+\bibitem{yan2024df40}
+Yan Z, Yao T, Chen S, Zhao Y, Fu X, Zhu J, Luo D, Wang C, Ding S, Wu Y, Yuan L.
+DF40: Toward next-generation deepfake detection.
+Adv Neural Inf Process Syst (NeurIPS), Datasets and Benchmarks Track. 2024.
+
+\bibitem{caron2021emerging}
+Caron M, Touvron H, Misra I, J{\'e}gou H, Mairal J, Bojanowski P, Joulin A.
+Emerging properties in self-supervised vision transformers.
+In: Proc IEEE/CVF Int Conf Comput Vis (ICCV). 2021.
+
+\bibitem{zhang2026dino}
+Zhang T, Yu P, Xia Z, Dai L, Zhou X, Gao H.
+Fine-grained DINO tuning with dual supervision for face forgery detection.
+In: Proc AAAI Conf Artif Intell (AAAI). 2026. arXiv:2511.12107.
+
+\bibitem{zou2026clipdino}
+Zou X, Zhou Y, Li K, Zhang S, Chen Y, Lang C, Xing J.
+Harnessing CLIP and DINO: An uncertainty-aware cascaded fusion network for generalizable deepfake image detection.
+arXiv preprint arXiv:2609.07670. 2026.
+
+\bibitem{benzaken2022bitfit}
+Ben Zaken E, Goldberg Y, Ravfogel S.
+BitFit: Simple parameter-efficient fine-tuning for transformer-based masked language models.
+In: Proc 60th Annu Meet Assoc Comput Linguist (ACL), Vol 2. 2022;1--9.
+
+\bibitem{wang2022ln}
+Qi W, Ruan YP, Zuo Y, Li T.
+Parameter-efficient tuning on layer normalization for pre-trained language models.
+arXiv preprint arXiv:2211.08682. 2022.
+
+\bibitem{giannou2023layernorm}
+Giannou A, Rajput S, Papailiopoulos D.
+The expressive power of tuning only the normalization layers.
+In: Proc Conf Learn Theory (COLT). 2023.
+
+\bibitem{valizadeh2024layernorm}
+ValizadehAslani T, Liang H.
+LayerNorm: A key component in parameter-efficient fine-tuning.
+arXiv preprint arXiv:2403.20284. 2024.
+
+\bibitem{hu2022lora}
+Hu EJ, Shen Y, Wallis P, Allen-Zhu Z, Li Y, Wang S, et al.
+LoRA: Low-rank adaptation of large language models.
+In: Int Conf Learn Represent (ICLR). 2022.
+
+\bibitem{abdullah2026tap}
+Abdullah A, Ebert N, Wasenm{\"u}ller O.
+TAP into the patch tokens: Leveraging vision foundation model features for AI-generated image detection.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit Workshops (CVPRW). 2026. arXiv:2604.26772.
+
+\bibitem{xu2026bpl}
+Xu Y, He R, Yan Z, Dong Y, Han Z, Wang X, Yin Y.
+BPL: Generalizable deepfake detection via bias-only pair-aware learning.
+In: Proc Int Conf Mach Learn (ICML). 2026.
+
+\bibitem{zhang2026layermask}
+Zhang X, Weng W, Fu D, Chen B, Li Z, He Z, Fu Z.
+Generalizable deepfake detection based on forgery-aware layer masking and multi-artifact subspace decomposition.
+arXiv preprint arXiv:2601.01041. 2026.
+
+\bibitem{liu2024mole}
+Liu Z, Wang H, Kang Y, Wang S.
+Mixture of low-rank experts for transferable AI-generated image detection.
+arXiv preprint arXiv:2404.04883. 2024.
+
+\bibitem{chen2026envsubspace}
+Chen S, Jia H, Li C, Ma C, Gao Z, Chen S.
+Environment-invariant subspace learning for generalizable deepfake detection.
+arXiv preprint arXiv:2608.17700. 2026.
+
+\bibitem{liao2026dfa}
+Liao J, Wei Y, Bon RCC, Wang S, Chow KP, Lam KY.
+Deepfake Forensics Adapter: A dual-stream network for generalizable deepfake detection.
+In: Proc Int Conf Digital Forensics and Cyber Crime (ICDF2C). 2025. arXiv:2603.01450.
+
+\bibitem{han2024fcg}
+Han YH, Huang TM, Hua KL, Chen JC.
+Towards more general video-based deepfake detection through facial component guided adaptation for foundation model.
+arXiv preprint arXiv:2404.05583. 2024.
+
+\bibitem{lin2025repdfd}
+Lin K, Lin Y, Li W, Yao T, Li B.
+Standing on the shoulders of giants: Reprogramming visual-language model for general deepfake detection.
+In: Proc AAAI Conf Artif Intell (AAAI). 2025. arXiv:2409.02664.
+
+\bibitem{jiang2026adaptprompt}
+Jiang Y, Alam MT, Khan SA, Dang-Nguyen DT, Karray F.
+AdaptPrompt: Parameter-efficient adaptation of VLMs for generalizable deepfake detection.
+In: Deepfake Forensics Workshop, ACM Multimedia. 2026. arXiv:2512.17730.
+
+\bibitem{yang2026separable}
+Yang E, Wu B, Li Y.
+Generalizable face forgery detection via separable prompt learning.
+arXiv preprint arXiv:2604.17307. 2026.
+
+\bibitem{wang2020alignment}
+Wang T, Isola P.
+Understanding contrastive representation learning through alignment and uniformity on the hypersphere.
+In: Proc Int Conf Mach Learn (ICML). 2020.
+
+\bibitem{wang2026shortcut}
+Wang Y, Yang Y, Liu J, Zhu F, Wu L, Chua TS.
+Suppressing forgery-specific shortcuts for generalizable deepfake detection.
+arXiv preprint arXiv:2606.01843. 2026.
+
+\bibitem{wortsman2022soups}
+Wortsman M, Ilharco G, Gadre SY, Roelofs R, Gontijo-Lopes R, Morcos AS, et al.
+Model soups: Averaging weights of multiple fine-tuned models improves accuracy without increasing inference time.
+In: Proc Int Conf Mach Learn (ICML). 2022.
+
+\bibitem{wortsman2022wiseft}
+Wortsman M, Ilharco G, Kim JW, Li M, Kornblith S, Roelofs R, et al.
+Robust fine-tuning of zero-shot models.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2022.
+
+\bibitem{shiohara2022sbi}
+Shiohara K, Yamasaki T.
+Detecting deepfakes with self-blended images.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2022.
+
+\bibitem{chen2022sladd}
+Chen L, Zhang Y, Song Y, Liu L, Wang J.
+Self-supervised learning of adversarial example: Towards good generalizations for deepfake detection.
+In: Proc IEEE/CVF Conf Comput Vis Pattern Recognit (CVPR). 2022.
+
+\bibitem{lin2024cdfa}
+Lin Y, Song W, Li B, Li Y, Ni J, Chen H, Li Q.
+Fake it till you make it: Curricular dynamic forgery augmentations towards general deepfake detection.
+In: Proc Eur Conf Comput Vis (ECCV). 2024.
+
+\bibitem{pellegrini2025design}
+Pellegrini L, Pandolfini S, Maltoni D, Ferrara M, Prati M, Ramilli M.
+Generalized design choices for deepfake detectors.
+arXiv preprint arXiv:2511.21507. 2025.
+
+\bibitem{park2025mold}
+Park N, Kim K, Choe J, Shim H.
+Rethinking the use of vision transformers for AI-generated image detection.
+arXiv preprint arXiv:2512.04969. 2025.
+
+\bibitem{delibasoglu2026limits}
+Delibasoglu I.
+Cross-domain generalization limits of vision foundation models in facial deepfake detection.
+arXiv preprint arXiv:2605.24965. 2026.
+
+\bibitem{namazifar2023bias}
+Namazifar M, Hazarika D, Hakkani-T{\"u}r D.
+Role of bias terms in dot-product attention.
+In: Proc IEEE Int Conf Acoust Speech Signal Process (ICASSP). 2023.
+
+\end{thebibliography}
+
+\end{document}

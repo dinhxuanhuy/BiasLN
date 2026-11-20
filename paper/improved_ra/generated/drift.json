@@ -1,0 +1,28 @@
+{
+ "bitfit": {
+  "median_cos_real": 0.09864939004182816,
+  "median_cos_fake": 0.19176983833312988,
+  "fisher_video": 0.41013739343517636
+ },
+ "ra_real": {
+  "median_cos_real": 0.9819296002388,
+  "median_cos_fake": 0.9274569749832153,
+  "fisher_video": 0.057886733794148014
+ },
+ "biasln": {
+  "median_cos_real": 0.08521738648414612,
+  "median_cos_fake": 0.15542446076869965,
+  "fisher_video": 0.3997435047272381
+ },
+ "gend": {
+  "median_cos_real": 0.4678451418876648,
+  "median_cos_fake": 0.3716999888420105,
+  "fisher_video": 0.038045594914307056
+ },
+ "clip": {
+  "fisher_video": 0.01680550610575262
+ },
+ "effort": {
+  "fisher_video": 0.06549077313088085
+ }
+}

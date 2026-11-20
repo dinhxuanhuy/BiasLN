@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\setlist[itemize]{leftmargin=*, topsep=2pt, itemsep=3pt}
+
+\begin{document}
+
+\begin{center}
+{\LARGE Review of ``BiasLN: Efficient Tuning for Generalizable Deepfake Detection Across Benchmarks''}\\[0.5em]
+{\large Manuscript reviewed: \texttt{BiasLN\_final.tex}}\\[0.25em]
+2026-05-07
+\end{center}
+
+\section*{Overall assessment}
+This is a promising and mostly clear manuscript. The core idea---tuning only bias terms and LayerNorm affine parameters on top of a frozen CLIP encoder---is simple, plausible, and well aligned with the goal of reducing overfitting. I explicitly checked the displayed equations for branch conventions, sign conventions, symbol definitions, dimensional consistency, and implementation ambiguity. There is no inverse-trig or coordinate-branch issue in the current mathematical presentation, and I did not find notation-drift problems for the main symbols $\mathbf{f}$, $\tilde{\mathbf{f}}$, $\hat{y}$, $h_{\phi}$, and $\mathcal{L}_{\text{ce}}$. I also spot-checked several reported averages in the tables, and the checked averages are arithmetically consistent.
+
+The main weaknesses are not in the backbone equations themselves. They are in the evaluation framing, checkpoint-selection claims, fairness of the comparison protocol, and one important mismatch between the written loss equation and the training procedure described in prose.
+
+\section*{Most important technical findings}
+
+\paragraph{1. [Definite internal inconsistency] CDF-v2 is not fully ``unseen'' once it is used for checkpoint selection.}
+\begin{itemize}
+    \item \textbf{Location:} Introduction (lines 77--83), Experiments (lines 266--269), Results (line 352).
+    \item \textbf{Problem:} The manuscript says the method is evaluated on ``five unseen datasets'' and later treats CDF-v2 as an unseen benchmark, but the checkpoint is selected on a held-out subset of CDF-v2.
+    \item \textbf{Why it matters:} Even with a disjoint split, the model-selection procedure has already used target-domain information from CDF-v2. That means CDF-v2 should not be described as fully unseen at the dataset level, and averages that include it should not be presented as averages over five unseen datasets without qualification.
+    \item \textbf{Suggested fix:} Either relabel CDF-v2 as an auxiliary validation domain and report a separate average over the truly untouched cross-dataset test sets, or choose validation data from a different dataset that is not part of the reported test table. Every sentence that currently says ``five unseen datasets'' should then be updated accordingly.
+\end{itemize}
+
+\paragraph{2. [Definite internal inconsistency] The number of cross-method benchmarks is inconsistent.}
+\begin{itemize}
+    \item \textbf{Location:} Introduction (lines 77 and 83) versus Cross-method evaluation (line 275) and the comparison table.
+    \item \textbf{Problem:} The introduction and contribution list say ``six single-method benchmarks,'' but the Experiments section explicitly lists seven methods---UniFace, BlendFace, E4S, FaceDancer, FSGAN, InSwap, and SimSwap---and the table contains seven cross-method columns before the average.
+    \item \textbf{Why it matters:} This is a straightforward internal contradiction. It makes the scope of the cross-method benchmark unclear and raises avoidable doubt about the results table.
+    \item \textbf{Suggested fix:} Decide whether the benchmark contains six or seven methods and make the count consistent everywhere, including the introduction, contributions, experiments, and conclusion.
+\end{itemize}
+
+\paragraph{3. [Definite equation/prose mismatch] The loss equation does not match the training procedure described in prose.}
+\begin{itemize}
+    \item \textbf{Location:} Classification Head and Training Objective (lines 179--183) and Training Configuration (line 221).
+    \item \textbf{Problem:} The manuscript says the model uses class-weighted cross-entropy with label smoothing and specifies $w_{\mathrm{fake}}:w_{\mathrm{real}} = 2:1$, but the displayed objective is
+    \[
+    \mathcal{L}_{\text{ce}} = - \sum_{c=1}^{C} \tilde{y}_c \log p_c,
+    \]
+    which is unweighted. In addition, $C$ is not defined, and the mapping from logits $\hat{y}$ to probabilities $p_c$ is not written.
+    \item \textbf{Why it matters:} This is the main training objective. As written, the math is not faithful to the stated implementation and is not fully reproducible.
+    \item \textbf{Suggested fix:} Either change the prose to ordinary label-smoothed cross-entropy, or update the equation to the weighted form, for example
+    \[
+    \mathcal{L}_{\text{ce}} = - \sum_{c=1}^{C} w_c \, \tilde{y}_c \log p_c,
+    \qquad p = \mathrm{softmax}(\hat{y}),
+    \qquad C = 2,
+    \]
+    and define $\tilde{y}_c$ explicitly for $\alpha = 0.1$.
+\end{itemize}
+
+\paragraph{4. [Unsupported claim] The validation figure does not support the stated conclusion about source-domain validation.}
+\begin{itemize}
+    \item \textbf{Location:} ``Importance of Cross-Domain Validation'' (lines 366--369).
+    \item \textbf{Problem:} The figure is described as showing training loss on FF++ and cross-domain validation loss on CDF-v2. The text then concludes that ``validating on the source domain is largely uninformative.'' However, no source-domain validation curve, source-domain validation AUC, or checkpoint-ranking comparison is actually shown.
+    \item \textbf{Why it matters:} This checkpoint-selection claim is one of the paper's central messages. The current evidence supports the weaker statement that source-domain \emph{training loss} is uninformative for transfer, not the stronger statement about source-domain \emph{validation}.
+    \item \textbf{Suggested fix:} Either add source-domain validation curves/metrics and directly compare the checkpoints they select against cross-domain selection, or soften the claim so it matches the evidence currently presented.
+\end{itemize}
+
+\paragraph{5. [Likely issue] The comparison protocol is not clearly fair with respect to checkpoint selection.}
+\begin{itemize}
+    \item \textbf{Location:} Experiments (lines 266--269) and comparison table caption (lines 311--313).
+    \item \textbf{Problem:} BiasLN uses a held-out subset of CDF-v2 for checkpoint selection, but the comparison table says the baseline numbers come from released checkpoints when available, or from training that follows the original implementations. The manuscript does not say whether the baselines were also selected with the same CDF-v2 validation rule.
+    \item \textbf{Why it matters:} The paper itself argues that checkpoint selection strongly affects out-of-domain generalization. If BiasLN receives cross-domain model-selection help that some baselines do not, the comparison may not be apples-to-apples.
+    \item \textbf{Suggested fix:} State the checkpoint-selection rule for every baseline. Ideally, re-train all baselines that can be re-run under the same validation protocol, or clearly separate those numbers from author-released checkpoints selected under different rules.
+\end{itemize}
+
+\paragraph{6. [Likely reporting issue] The cross-dataset average mixes different denominators across methods.}
+\begin{itemize}
+    \item \textbf{Location:} Comparison table (lines 330--338) and the accompanying claim in line 352.
+    \item \textbf{Problem:} Several methods have ``--'' for UADFV, so their $\mathrm{Avg(D)}$ is computed over four datasets, whereas other rows are averaged over five.
+    \item \textbf{Why it matters:} Ranking methods by $\mathrm{Avg(D)}$ is then not strictly comparable across rows, because some methods are missing one domain from the average.
+    \item \textbf{Suggested fix:} Add a footnote that $\mathrm{Avg(D)}$ is computed over available datasets only, and also report a common-split average over the subset shared by all methods.
+\end{itemize}
+
+\paragraph{7. [Implementation ambiguity] The augmentation recipe is incomplete.}
+\begin{itemize}
+    \item \textbf{Location:} Data Augmentation (lines 206--212).
+    \item \textbf{Problem:} Probabilities are given for flipping, rotation, blur, and brightness, but not for contrast adjustment or JPEG compression.
+    \item \textbf{Why it matters:} The augmentation pipeline is part of the reproducibility story. Missing probabilities make the training recipe underspecified.
+    \item \textbf{Suggested fix:} State the application probabilities explicitly, or say that these transforms are always applied.
+\end{itemize}
+
+\section*{Meaningful editorial findings}
+
+\paragraph{1. The source-code sentence is awkward and uses the wrong product capitalization.}
+\begin{itemize}
+    \item \textbf{Location:} Line 90.
+    \item \textbf{Problem:} ``The official source code is updated at \href{https://github.com/ducthinh4477/BiasLN}{Github}'' is awkward, and ``Github'' should be ``GitHub.''
+    \item \textbf{Why it matters:} This sentence appears in the introduction and is highly visible.
+    \item \textbf{Suggested fix:} Rewrite as ``The official source code is available at \href{https://github.com/ducthinh4477/BiasLN}{GitHub}.''
+\end{itemize}
+
+\paragraph{2. The bibliography style is visibly inconsistent and looks unfinished.}
+\begin{itemize}
+    \item \textbf{Location:} Representative examples include lines 444--446, 453--456, 475--478, 480--500, and 566--569.
+    \item \textbf{Problem:} Some entries use initials plus quoted titles, others use full given names and \verb|\emph| for the title, and some recent references omit metadata that other entries do provide. For example, \texttt{wang2024deepfakebench} is listed only as ``\textit{arXiv preprint}, 2024.'' without the identifier.
+    \item \textbf{Why it matters:} Even when the scientific content is solid, an inconsistent bibliography makes the manuscript feel unfinished and reduces trust in the reference list.
+    \item \textbf{Suggested fix:} Normalize all references to one style and fill missing metadata for the recent preprints/conference papers.
+\end{itemize}
+
+\section*{Proofing sweep}
+The bundled proofing scan on the compiled manuscript PDF returned no automatic hits, but a short manual sweep still found a few obvious, high-confidence defects worth fixing:
+\begin{itemize}
+    \item \textbf{Introduction, line 64:} ``recent years.While'' should be ``recent years. While.''
+    \item \textbf{Introduction, line 72:} ``promising alternative.Recent'' should be ``promising alternative. Recent.''
+    \item \textbf{Evaluation Benchmark, line 281:} ``aproachs'' should be ``approaches.''
+    \item \textbf{Cross-domain validation paragraph, line 368:} ``based on validation performance on subset of Celeb-DF-v2'' should be ``based on validation performance on a subset of Celeb-DF-v2.''
+\end{itemize}
+
+\section*{Highest-priority fixes before submission}
+\begin{enumerate}[leftmargin=*]
+    \item Reframe the CDF-v2 protocol honestly: either stop calling it unseen, or remove it from the unseen cross-dataset summary and headline claims.
+    \item Make the checkpoint-selection evidence match the claim by adding source-domain validation results or weakening the claim accordingly.
+    \item Fix the loss equation so it matches the stated weighted, label-smoothed training objective and defines all symbols used in the objective.
+    \item Clarify the comparison protocol so that baseline checkpoint selection is as explicit and fair as the BiasLN checkpoint-selection procedure.
+\end{enumerate}
+
+\section*{Items needing external verification}
+\begin{itemize}
+    \item Before a camera-ready or archival submission, confirm the final bibliographic metadata for the recent references \texttt{yan2025effort}, \texttt{cui2025forada},\\
+    \texttt{yermakov2025gend}, and \texttt{wang2024deepfakebench}. In the current bibliography, several recent entries look provisional rather than finalized.
+\end{itemize}
+
+\end{document}

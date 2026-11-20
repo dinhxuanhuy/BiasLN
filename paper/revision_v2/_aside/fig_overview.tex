@@ -1,0 +1,42 @@
+% Overview: where the four PEFT branches act on a pre-norm ViT block (CLIP ViT-L/14: 24 blocks)
+\begin{tikzpicture}[
+  font=\scriptsize, >=stealth, node distance=4mm,
+  blk/.style={draw, rounded corners=1.5pt, minimum width=24mm, minimum height=5.2mm, fill=gray!8, align=center},
+  sel/.style={fill=orange!25, draw=orange!70!black},
+  add/.style={fill=green!20, draw=green!50!black},
+  rep/.style={fill=violet!18, draw=violet!70!black},
+  hyb/.style={fill=blue!15, draw=blue!60!black},
+  tag/.style={rounded corners=1.5pt, inner sep=2pt, align=left, font=\tiny},
+  sum/.style={draw, circle, inner sep=0.6pt, font=\tiny}]
+% input / prompts
+\node[blk] (in) {Patch tokens + [CLS]};
+\node[tag, add, right=3mm of in] (pr) {\textbf{Additive}: learnable\\prompt tokens};
+\draw[->, green!50!black] (pr) -- (in);
+% attention part
+\node[blk, sel, above=of in] (ln1) {LayerNorm$_1$ ($\boldsymbol\gamma,\boldsymbol\beta$)};
+\node[blk, above=of ln1] (att) {MHSA: $\mathbf{W}_{q,k,v,o}$, $\mathbf{b}_{q,k,v,o}$};
+\node[sum, above=3mm of att] (s1) {$+$};
+\node[blk, sel, above=of s1] (ln2) {LayerNorm$_2$ ($\boldsymbol\gamma,\boldsymbol\beta$)};
+\node[blk, above=of ln2] (mlp) {MLP: $\mathbf{W}_{\mathrm{fc1,fc2}}$, $\mathbf{b}_{\mathrm{fc1,fc2}}$};
+\node[sum, above=3mm of mlp] (s2) {$+$};
+\node[blk, above=5mm of s2] (cls) {$L_2$-norm [CLS] $\rightarrow$ linear head};
+\draw[->] (in) -- (ln1); \draw[->] (ln1) -- (att); \draw[->] (att) -- (s1); \draw[->] (s1) -- (ln2);
+\draw[->] (ln2) -- (mlp); \draw[->] (mlp) -- (s2); \draw[->] (s2) -- node[right, font=\tiny]{$\times 24$ blocks} (cls);
+% residual paths
+\draw[->] ($(in.north)+(0,1.5mm)$) -- ++(-15mm,0) |- (s1.west);
+\draw[->] ($(s1.north)+(0,1.5mm)$) -- ++(-15mm,0) |- (s2.west);
+% adapter
+\node[blk, add, minimum width=11mm, right=6mm of mlp] (ad) {Adapter};
+\draw[->, green!50!black] ($(ln2.north)!0.5!(mlp.south)$) -| (ad.south);
+\draw[->, green!50!black] (ad.north) |- (s2.east);
+% reparameterization
+\node[tag, rep, left=7mm of att] (lr) {\textbf{Reparameterization}:\\$\mathbf{W}+\mathbf{B}\mathbf{A}$ (LoRA),\\SVD residual (Effort)};
+\draw[->, violet!70!black] (lr) -- (att);
+% selective
+\node[tag, sel, left=7mm of mlp] (bs) {\textbf{Selective}: biases $\mathbf{b}$\\(BitFit), LayerNorm\\$\boldsymbol\gamma,\boldsymbol\beta$ (LN tuning),\\both (BiasLN), head};
+\draw[->, orange!70!black] (bs) -- (mlp);
+\draw[->, orange!70!black] (bs.south) |- (ln2.west);
+% hybrid
+\node[tag, hyb, right=3mm of cls] (hy) {\textbf{Hybrid}: PEFT + auxiliary\\losses (GenD), experts,\\temporal modules, soups};
+\draw[->, blue!60!black] (hy) -- (cls);
+\end{tikzpicture}

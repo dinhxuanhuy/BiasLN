@@ -1,0 +1,615 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/Ktdn6qrI2rKpBWbsE//LpbfkZuw</id>
+  <title>arXiv Query: search_query=&amp;id_list=2503.19683,2411.19715,2512.17730,2603.01450,2508.06248,2511.12107,2609.07670,2404.04883,2605.24965,2604.17307,2409.02664,2406.06965,2403.17881,2411.15633,2601.01041,2608.17700,2606.01843,2604.26772,2411.19117,2512.04969,2511.21507,2404.05583&amp;start=0&amp;max_results=30</title>
+  <updated>2026-11-18T07:33:39Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=30&amp;id_list=2503.19683,2411.19715,2512.17730,2603.01450,2508.06248,2511.12107,2609.07670,2404.04883,2605.24965,2604.17307,2409.02664,2406.06965,2403.17881,2411.15633,2601.01041,2608.17700,2606.01843,2604.26772,2411.19117,2512.04969,2511.21507,2404.05583" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>30</opensearch:itemsPerPage>
+  <opensearch:totalResults>22</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2508.06248v4</id>
+    <title>Deepfake Detection that Generalizes Across Benchmarks</title>
+    <updated>2026-05-11T10:15:54Z</updated>
+    <link href="https://arxiv.org/abs/2508.06248v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.06248v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The generalization of deepfake detectors to unseen manipulation techniques remains a challenge for practical deployment. Although many approaches adapt foundation models by introducing significant architectural complexity, this work demonstrates that robust generalization is achievable through a parameter-efficient adaptation of one of the foundational pre-trained vision encoders. The proposed method, GenD, fine-tunes only the Layer Normalization parameters (0.03% of the total) and enhances generalization by enforcing a hyperspherical feature manifold using L2 normalization and metric learning on it.
+  We conducted an extensive evaluation on 14 benchmark datasets spanning from 2019 to 2025. The proposed method achieves state-of-the-art performance, outperforming more complex, recent approaches in average cross-dataset AUROC. Our analysis yields two primary findings for the field: 1) training on paired real-fake data from the same source video is essential for mitigating shortcut learning and improving generalization, and 2) detection difficulty on academic datasets has not strictly increased over time, with models trained on older, diverse datasets showing strong generalization capabilities.
+  This work delivers a computationally efficient and reproducible method, proving that state-of-the-art generalization is attainable by making targeted, minimal changes to a pre-trained foundational image encoder model. The code is at: https://github.com/yermandy/GenD</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-08T12:03:56Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Andrii Yermakov</name>
+    </author>
+    <author>
+      <name>Jan Cech</name>
+    </author>
+    <author>
+      <name>Jiri Matas</name>
+    </author>
+    <author>
+      <name>Mario Fritz</name>
+    </author>
+    <arxiv:doi>10.1109/WACV61042.2026.00082</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1109/WACV61042.2026.00082" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.19683v2</id>
+    <title>Unlocking the Hidden Potential of CLIP in Generalizable Deepfake Detection</title>
+    <updated>2025-03-26T11:21:23Z</updated>
+    <link href="https://arxiv.org/abs/2503.19683v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.19683v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper tackles the challenge of detecting partially manipulated facial deepfakes, which involve subtle alterations to specific facial features while retaining the overall context, posing a greater detection difficulty than fully synthetic faces. We leverage the Contrastive Language-Image Pre-training (CLIP) model, specifically its ViT-L/14 visual encoder, to develop a generalizable detection method that performs robustly across diverse datasets and unknown forgery techniques with minimal modifications to the original model. The proposed approach utilizes parameter-efficient fine-tuning (PEFT) techniques, such as LN-tuning, to adjust a small subset of the model's parameters, preserving CLIP's pre-trained knowledge and reducing overfitting. A tailored preprocessing pipeline optimizes the method for facial images, while regularization strategies, including L2 normalization and metric learning on a hyperspherical manifold, enhance generalization. Trained on the FaceForensics++ dataset and evaluated in a cross-dataset fashion on Celeb-DF-v2, DFDC, FFIW, and others, the proposed method achieves competitive detection accuracy comparable to or outperforming much more complex state-of-the-art techniques. This work highlights the efficacy of CLIP's visual encoder in facial deepfake detection and establishes a simple, powerful baseline for future research, advancing the field of generalizable deepfake detection. The code is available at: https://github.com/yermandy/deepfake-detection</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-25T14:10:54Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Andrii Yermakov</name>
+    </author>
+    <author>
+      <name>Jan Cech</name>
+    </author>
+    <author>
+      <name>Jiri Matas</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.19715v4</id>
+    <title>Forensics Adapter: Unleashing CLIP for Generalizable Face Forgery Detection</title>
+    <updated>2026-07-24T08:17:19Z</updated>
+    <link href="https://arxiv.org/abs/2411.19715v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.19715v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We describe Forensics Adapter, an adapter network designed to transform CLIP into an effective and generalizable face forgery detector. Although CLIP is highly versatile, adapting it for face forgery detection is non-trivial as forgery-related knowledge is entangled with a wide range of unrelated knowledge. Existing methods treat CLIP merely as a feature extractor, lacking task-specific adaptation, which limits their effectiveness. To address this, we introduce an adapter to learn face forgery traces -- the blending boundaries unique to forged faces, guided by task-specific objectives. Then we enhance the CLIP visual tokens with a dedicated interaction strategy that communicates knowledge across CLIP and the adapter. Since the adapter is alongside CLIP, its versatility is highly retained, naturally ensuring strong generalizability in face forgery detection. {With only $\textbf{5.7M}$ trainable parameters, our method achieves superior performance across six standard datasets.} Additionally, we describe Forensics Adapter++, an extended method that incorporates textual modality via a newly proposed forgery-aware prompt learning strategy. This extension leads to a further $\textbf{1.3\%}$ performance boost over the original Forensics Adapter. We believe the proposed methods can serve as a baseline for future CLIP-based face forgery detection methods. The code has been released at https://github.com/OUC-VAS/ForensicsAdapter.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-29T14:02:11Z</published>
+    <arxiv:comment>TPAMI 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Xinjie Cui</name>
+    </author>
+    <author>
+      <name>Yuezun Li</name>
+    </author>
+    <author>
+      <name>Delong Zhu</name>
+    </author>
+    <author>
+      <name>Jiaran Zhou</name>
+    </author>
+    <author>
+      <name>Junyu Dong</name>
+    </author>
+    <author>
+      <name>Siwei Lyu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2609.07670v1</id>
+    <title>Harnessing CLIP and DINO: An Uncertainty-Aware Cascaded Fusion Network for Generalizable Deepfake Image Detection</title>
+    <updated>2026-09-07T15:59:19Z</updated>
+    <link href="https://arxiv.org/abs/2609.07670v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2609.07670v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The growing realism and accessibility of manipulated and generated faces threaten the trustworthiness of digital media. To detect such forgeries, deepfake detectors based on vision foundation models have shown promising performance, but they typically rely on a single pretrained representation and are prone to overfitting to particular training distributions. To improve generalization to unseen forgeries, we propose UCF-Net, an uncertainty-aware cascaded fusion network that harnesses CLIP's language-aligned semantic priors and DINO's self-supervised visual-structure priors. UCF-Net extracts hierarchical features across Transformer depths, uses layer-wise expert aggregation to adaptively combine each encoder's multi-level cues, and performs weighted fusion of the resulting representations based on entropy-derived uncertainty. We further consolidate public deepfake datasets into a unified benchmark of approximately 4M images and construct a separate cross-generator evaluation set with over 8K face images from eight recent generators. On the unified benchmark, UCF-Net achieves the best mean AUC among the evaluated methods in both in-domain and cross-domain evaluations. On the cross-generator set, it adapts effectively with limited target-domain data, although zero-shot transfer remains challenging.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-09-07T15:59:19Z</published>
+    <arxiv:comment>Project page: https://xavierjiezou.github.io/UCF-Net/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Xuechao Zou</name>
+    </author>
+    <author>
+      <name>Yi Zhou</name>
+    </author>
+    <author>
+      <name>Kai Li</name>
+    </author>
+    <author>
+      <name>Shun Zhang</name>
+    </author>
+    <author>
+      <name>Yuhui Chen</name>
+    </author>
+    <author>
+      <name>Congyan Lang</name>
+    </author>
+    <author>
+      <name>Junliang Xing</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.04883v1</id>
+    <title>Mixture of Low-rank Experts for Transferable AI-Generated Image Detection</title>
+    <updated>2024-04-07T09:01:50Z</updated>
+    <link href="https://arxiv.org/abs/2404.04883v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.04883v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative models have shown a giant leap in synthesizing photo-realistic images with minimal expertise, sparking concerns about the authenticity of online information. This study aims to develop a universal AI-generated image detector capable of identifying images from diverse sources. Existing methods struggle to generalize across unseen generative models when provided with limited sample sources. Inspired by the zero-shot transferability of pre-trained vision-language models, we seek to harness the nontrivial visual-world knowledge and descriptive proficiency of CLIP-ViT to generalize over unknown domains. This paper presents a novel parameter-efficient fine-tuning approach, mixture of low-rank experts, to fully exploit CLIP-ViT's potential while preserving knowledge and expanding capacity for transferable detection. We adapt only the MLP layers of deeper ViT blocks via an integration of shared and separate LoRAs within an MoE-based structure. Extensive experiments on public benchmarks show that our method achieves superiority over state-of-the-art approaches in cross-generator generalization and robustness to perturbations. Remarkably, our best-performing ViT-L/14 variant requires training only 0.08% of its parameters to surpass the leading baseline by +3.64% mAP and +12.72% avg.Acc across unseen diffusion and autoregressive models. This even outperforms the baseline with just 0.28% of the training data. Our code and pre-trained models will be available at https://github.com/zhliuworks/CLIPMoLE.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-07T09:01:50Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Zihan Liu</name>
+    </author>
+    <author>
+      <name>Hanyi Wang</name>
+    </author>
+    <author>
+      <name>Yaoyu Kang</name>
+    </author>
+    <author>
+      <name>Shilin Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2605.24965v1</id>
+    <title>Cross-Domain Generalization Limits of Vision Foundation Models in Facial Deepfake Detection</title>
+    <updated>2026-05-24T09:33:46Z</updated>
+    <link href="https://arxiv.org/abs/2605.24965v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2605.24965v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid evolution of generative models has enabled the creation of hyper-realistic facial deepfakes, exposing a critical vulnerability in modern digital forensics: the inability of detectors to generalize to unseen manipulation techniques. Traditional networks suffer from representation collapse, overfitting to localized artifact fingerprints of specific training generators. This work investigates whether modern Vision Foundation Models can serve as generalizable, out-of-the-box feature extractors capable of tracking forensic anomalies across entirely unseen generative manifolds. We conduct a systematic cross-domain evaluation comparing three foundational learning paradigms: fully supervised macro-semantic features (RoPE-ViT), pure self-supervised geometric features (DINOv3), and multi-teacher agglomerative representations (NVIDIA C-RADIOv4-H). By deploying frozen backbones subjected to downstream linear probing, we map the performance limitations of these architectures on the challenging DF40 benchmark. Our empirical findings expose the intrinsic trade-offs between pre-training paradigms and parameter scale, proving that while foundation models retain high discriminative capabilities for entire face synthesis, localized face editing techniques expose fundamental boundaries in linear probe evaluation structures. Source code and model weights are available in http://github.com/mribrahim/deepfake</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-05-24T09:33:46Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ibrahim Delibasoglu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.21507v2</id>
+    <title>Generalized Design Choices for Deepfake Detectors</title>
+    <updated>2026-10-01T15:13:35Z</updated>
+    <link href="https://arxiv.org/abs/2511.21507v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.21507v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The effectiveness of deepfake detection methods often depends less on their core design and more on implementation details such as data preprocessing, augmentation strategies, and optimization techniques. These factors make it difficult to fairly compare detectors and to understand which factors truly contribute to their performance. To address this, we systematically investigate how different design choices influence the accuracy and generalization capabilities of deepfake detection models, focusing on aspects related to training, inference, and incremental updates. By isolating the impact of individual factors, we aim to establish robust, architecture-agnostic best practices for the design and development of future deepfake detection systems. Our experiments identify a set of design choices that consistently improve deepfake detection and enable state-of-the-art performance on the AI-GenBench benchmark.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-26T15:40:58Z</published>
+    <arxiv:comment>32 pages, 10 figures, 21 tables, code available: https://github.com/MI-BioLab/AI-GenBench</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Lorenzo Pellegrini</name>
+    </author>
+    <author>
+      <name>Serafino Pandolfini</name>
+    </author>
+    <author>
+      <name>Davide Maltoni</name>
+    </author>
+    <author>
+      <name>Matteo Ferrara</name>
+    </author>
+    <author>
+      <name>Marco Prati</name>
+    </author>
+    <author>
+      <name>Marco Ramilli</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.01843v1</id>
+    <title>Suppressing Forgery-Specific Shortcuts for Generalizable Deepfake Detection</title>
+    <updated>2026-06-01T07:54:58Z</updated>
+    <link href="https://arxiv.org/abs/2606.01843v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.01843v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deepfake detection suffers from poor generalization across forgery methods, as existing models tend to rely on spurious method-specific shortcuts that fail to transfer to unseen manipulations. While recent approaches attempt to improve generalization, they lack an explicit mechanism to identify and suppress such shortcuts in learned representations. In this work, we propose Shortcut Subspace Suppression (S^3) framework that explicitly characterizes and suppresses method-specific shortcuts via subspace modeling. Our key insight is that variations distinguishing different forgery methods capture method-specific artifacts and thus serve as an effective proxy for method-specific shortcuts. To this end, we train a lightweight linear probe for forgery method classification and perform Singular Value Decomposition (SVD) to extract the dominant shortcut subspace. Building on this formulation, we develop two complementary strategies to reduce shortcut reliance. During training, we softly suppress the shortcut subspace in feature representations, encouraging the model to rely on more generalizable cues for real/fake discrimination. At inference time, we introduce a training-free counterpart that attenuates neurons aligned with the identified shortcut directions, enabling plug-and-play generalization enhancement with improved interpretability. Extensive experiments on multiple benchmarks demonstrate that our method significantly improves cross-method generalization while maintaining strong in-domain performance. The code will be released upon acceptance of the submission.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-01T07:54:58Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yihui Wang</name>
+    </author>
+    <author>
+      <name>Yonghui Yang</name>
+    </author>
+    <author>
+      <name>Jilong Liu</name>
+    </author>
+    <author>
+      <name>Fengbin Zhu</name>
+    </author>
+    <author>
+      <name>Le Wu</name>
+    </author>
+    <author>
+      <name>Tat-Seng Chua</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.06965v4</id>
+    <title>Evolving from Single-modal to Multi-modal Facial Deepfake Detection: Progress and Challenges</title>
+    <updated>2025-04-03T07:47:44Z</updated>
+    <link href="https://arxiv.org/abs/2406.06965v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.06965v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As synthetic media, including video, audio, and text, become increasingly indistinguishable from real content, the risks of misinformation, identity fraud, and social manipulation escalate. This survey traces the evolution of deepfake detection from early single-modal methods to sophisticated multi-modal approaches that integrate audio-visual and text-visual cues. We present a structured taxonomy of detection techniques and analyze the transition from GAN-based to diffusion model-driven deepfakes, which introduce new challenges due to their heightened realism and robustness against detection. Unlike prior surveys that primarily focus on single-modal detection or earlier deepfake techniques, this work provides the most comprehensive study to date, encompassing the latest advancements in multi-modal deepfake detection, generalization challenges, proactive defense mechanisms, and emerging datasets specifically designed to support new interpretability and reasoning tasks. We further explore the role of Vision-Language Models (VLMs) and Multimodal Large Language Models (MLLMs) in strengthening detection robustness against increasingly sophisticated deepfake attacks. By systematically categorizing existing methods and identifying emerging research directions, this survey serves as a foundation for future advancements in combating AI-generated facial forgeries. A curated list of all related papers can be found at \href{https://github.com/qiqitao77/Comprehensive-Advances-in-Deepfake-Detection-Spanning-Diverse-Modalities}{https://github.com/qiqitao77/Awesome-Comprehensive-Deepfake-Detection}.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-11T05:48:04Z</published>
+    <arxiv:comment>P. Liu is with the Department of Computer Science and Engineering, University of Nevada, Reno, NV, 89512. Q. Tao and J. Zhou are with Centre for Frontier AI Research (CFAR), and Institute of High Performance Computing (IHPC), A*STAR, Singapore. J. Zhou is also with Centre for Advanced Technologies in Online Safety (CATOS), A*STAR, Singapore. J. Zhou is the corresponding author</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ping Liu</name>
+    </author>
+    <author>
+      <name>Qiqi Tao</name>
+    </author>
+    <author>
+      <name>Joey Tianyi Zhou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2511.12107v1</id>
+    <title>Fine-Grained DINO Tuning with Dual Supervision for Face Forgery Detection</title>
+    <updated>2025-11-15T08:57:21Z</updated>
+    <link href="https://arxiv.org/abs/2511.12107v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2511.12107v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The proliferation of sophisticated deepfakes poses significant threats to information integrity. While DINOv2 shows promise for detection, existing fine-tuning approaches treat it as generic binary classification, overlooking distinct artifacts inherent to different deepfake methods. To address this, we propose a DeepFake Fine-Grained Adapter (DFF-Adapter) for DINOv2. Our method incorporates lightweight multi-head LoRA modules into every transformer block, enabling efficient backbone adaptation. DFF-Adapter simultaneously addresses authenticity detection and fine-grained manipulation type classification, where classifying forgery methods enhances artifact sensitivity. We introduce a shared branch propagating fine-grained manipulation cues to the authenticity head. This enables multi-task cooperative optimization, explicitly enhancing authenticity discrimination with manipulation-specific knowledge. Utilizing only 3.5M trainable parameters, our parameter-efficient approach achieves detection accuracy comparable to or even surpassing that of current complex state-of-the-art methods.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-11-15T08:57:21Z</published>
+    <arxiv:comment>Accepted by AAAI 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Tianxiang Zhang</name>
+    </author>
+    <author>
+      <name>Peipeng Yu</name>
+    </author>
+    <author>
+      <name>Zhihua Xia</name>
+    </author>
+    <author>
+      <name>Longchen Dai</name>
+    </author>
+    <author>
+      <name>Xiaoyu Zhou</name>
+    </author>
+    <author>
+      <name>Hui Gao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.04969v1</id>
+    <title>Rethinking the Use of Vision Transformers for AI-Generated Image Detection</title>
+    <updated>2025-12-04T16:37:47Z</updated>
+    <link href="https://arxiv.org/abs/2512.04969v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.04969v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Rich feature representations derived from CLIP-ViT have been widely utilized in AI-generated image detection. While most existing methods primarily leverage features from the final layer, we systematically analyze the contributions of layer-wise features to this task. Our study reveals that earlier layers provide more localized and generalizable features, often surpassing the performance of final-layer features in detection tasks. Moreover, we find that different layers capture distinct aspects of the data, each contributing uniquely to AI-generated image detection. Motivated by these findings, we introduce a novel adaptive method, termed MoLD, which dynamically integrates features from multiple ViT layers using a gating-based mechanism. Extensive experiments on both GAN- and diffusion-generated images demonstrate that MoLD significantly improves detection performance, enhances generalization across diverse generative models, and exhibits robustness in real-world scenarios. Finally, we illustrate the scalability and versatility of our approach by successfully applying it to other pre-trained ViTs, such as DINOv2.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-04T16:37:47Z</published>
+    <arxiv:comment>Code: https://github.com/nahyeonkaty/mold</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>NaHyeon Park</name>
+    </author>
+    <author>
+      <name>Kunhee Kim</name>
+    </author>
+    <author>
+      <name>Junsuk Choe</name>
+    </author>
+    <author>
+      <name>Hyunjung Shim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2404.05583v3</id>
+    <title>Towards More General Video-based Deepfake Detection through Facial Component Guided Adaptation for Foundation Model</title>
+    <updated>2025-03-16T17:10:58Z</updated>
+    <link href="https://arxiv.org/abs/2404.05583v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2404.05583v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative models have enabled the creation of highly realistic facial-synthetic images, raising significant concerns due to their potential for misuse. Despite rapid advancements in the field of deepfake detection, developing efficient approaches to leverage foundation models for improved generalizability to unseen forgery samples remains challenging. To address this challenge, we propose a novel side-network-based decoder that extracts spatial and temporal cues using the CLIP image encoder for generalized video-based Deepfake detection. Additionally, we introduce Facial Component Guidance (FCG) to enhance spatial learning generalizability by encouraging the model to focus on key facial regions. By leveraging the generic features of a vision-language foundation model, our approach demonstrates promising generalizability on challenging Deepfake datasets while also exhibiting superiority in training data efficiency, parameter efficiency, and model robustness.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-04-08T14:58:52Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yue-Hua Han</name>
+    </author>
+    <author>
+      <name>Tai-Ming Huang</name>
+    </author>
+    <author>
+      <name>Kai-Lung Hua</name>
+    </author>
+    <author>
+      <name>Jun-Cheng Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2409.02664v4</id>
+    <title>Standing on the Shoulders of Giants: Reprogramming Visual-Language Model for General Deepfake Detection</title>
+    <updated>2025-04-11T13:57:48Z</updated>
+    <link href="https://arxiv.org/abs/2409.02664v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2409.02664v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The proliferation of deepfake faces poses huge potential negative impacts on our daily lives. Despite substantial advancements in deepfake detection over these years, the generalizability of existing methods against forgeries from unseen datasets or created by emerging generative models remains constrained. In this paper, inspired by the zero-shot advantages of Vision-Language Models (VLMs), we propose a novel approach that repurposes a well-trained VLM for general deepfake detection. Motivated by the model reprogramming paradigm that manipulates the model prediction via input perturbations, our method can reprogram a pre-trained VLM model (e.g., CLIP) solely based on manipulating its input without tuning the inner parameters. First, learnable visual perturbations are used to refine feature extraction for deepfake detection. Then, we exploit information of face embedding to create sample-level adaptative text prompts, improving the performance. Extensive experiments on several popular benchmark datasets demonstrate that (1) the cross-dataset and cross-manipulation performances of deepfake detection can be significantly and consistently improved (e.g., over 88\% AUC in cross-dataset setting from FF++ to WildDeepfake); (2) the superior performances are achieved with fewer trainable parameters, making it a promising approach for real-world applications.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-09-04T12:46:30Z</published>
+    <arxiv:comment>Accepted by AAAI 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Kaiqing Lin</name>
+    </author>
+    <author>
+      <name>Yuzhen Lin</name>
+    </author>
+    <author>
+      <name>Weixiang Li</name>
+    </author>
+    <author>
+      <name>Taiping Yao</name>
+    </author>
+    <author>
+      <name>Bin Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.17881v5</id>
+    <title>Deepfake Generation and Detection: A Benchmark and Survey</title>
+    <updated>2026-03-09T04:30:13Z</updated>
+    <link href="https://arxiv.org/abs/2403.17881v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2403.17881v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deepfake is a technology dedicated to creating highly realistic facial images and videos under specific conditions, which has significant application potential in fields such as entertainment, movie production, digital human creation, to name a few. With the advancements in deep learning, techniques primarily represented by Variational Autoencoders and Generative Adversarial Networks have achieved impressive generation results. More recently, the emergence of diffusion models with powerful generation capabilities has sparked a renewed wave of research. In addition to deepfake generation, corresponding detection technologies continuously evolve to regulate the potential misuse of deepfakes, such as for privacy invasion and phishing attacks. This survey comprehensively reviews the latest developments in deepfake generation and detection, summarizing and analyzing current state-of-the-arts in this rapidly evolving field. We first unify task definitions, comprehensively introduce datasets and metrics, and discuss developing technologies. Then, we discuss the development of several related sub-fields and focus on researching four representative deepfake fields: face swapping, face reenactment, talking face generation, and facial attribute editing, as well as forgery detection. Subsequently, we comprehensively benchmark representative methods on popular datasets for each field, fully evaluating the latest and influential published works. Finally, we analyze challenges and future research directions of the discussed fields.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-03-26T17:12:34Z</published>
+    <arxiv:comment>This paper has been accepted by ACM Computing Surveys. We closely follow the latest developments in this \href{https://github.com/flyingby/Awesome-Deepfake-Generation-and-Detection}{project}</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Gan Pei</name>
+    </author>
+    <author>
+      <name>Jiangning Zhang</name>
+    </author>
+    <author>
+      <name>Menghan Hu</name>
+    </author>
+    <author>
+      <name>Zhenyu Zhang</name>
+    </author>
+    <author>
+      <name>Chengjie Wang</name>
+    </author>
+    <author>
+      <name>Yunsheng Wu</name>
+    </author>
+    <author>
+      <name>Guangtao Zhai</name>
+    </author>
+    <author>
+      <name>Jian Yang</name>
+    </author>
+    <author>
+      <name>Dacheng Tao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.26772v1</id>
+    <title>TAP into the Patch Tokens: Leveraging Vision Foundation Model Features for AI-Generated Image Detection</title>
+    <updated>2026-04-29T15:03:25Z</updated>
+    <link href="https://arxiv.org/abs/2604.26772v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.26772v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent methods demonstrate that large-scale pretrained models, such as CLIP vision transformers, effectively detect AI-generated images (AIGIs) from unseen generative models when used as feature extractors. Many state-of-the-art methods for AI-generated image detection build upon the original CLIP-ViT to enhance this generalization. Since CLIP's release, numerous vision foundation models (VFMs) have emerged, incorporating architectural improvements and different training paradigms. Despite these advances, their potential for AIGI detection and AI image forensics remains largely unexplored. In this work, we present a comprehensive benchmark across multiple VFM families, covering diverse pretraining objectives, input resolutions, and model scales. We systematically evaluate their out-of-the-box performance for detecting fully-generated AI-images and AI-inpainted images, and discover that the best model outperforms the original CLIP by more than 12% in accuracy, beating established approaches in the process. To fully leverage the features of a modern VFM, we propose a simple redesign of the classifier head by utilizing tunable attention pooling (TAP), which aggregates output tokens into a refined global representation. Integrating TAP with the latest VFMs yields substantial performance gains across several AIGI detection benchmarks, establishing a new state-of-the-art on two challenging benchmarks for in-the-wild detection of AI-generated and -inpainted images.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-29T15:03:25Z</published>
+    <arxiv:comment>This paper has been accepted at IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW), 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ahmed Abdullah</name>
+    </author>
+    <author>
+      <name>Nikolas Ebert</name>
+    </author>
+    <author>
+      <name>Oliver Wasenmüller</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.19117v1</id>
+    <title>Understanding and Improving Training-Free AI-Generated Image Detections with Vision Foundation Models</title>
+    <updated>2024-11-28T13:04:45Z</updated>
+    <link href="https://arxiv.org/abs/2411.19117v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.19117v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid advancement of generative models has introduced serious risks, including deepfake techniques for facial synthesis and editing. Traditional approaches rely on training classifiers and enhancing generalizability through various feature extraction techniques. Meanwhile, training-free detection methods address issues like limited data and overfitting by directly leveraging statistical properties from vision foundation models to distinguish between real and fake images. The current leading training-free approach, RIGID, utilizes DINOv2 sensitivity to perturbations in image space for detecting fake images, with fake image embeddings exhibiting greater sensitivity than those of real images. This observation prompts us to investigate how detection performance varies across model backbones, perturbation types, and datasets. Our experiments reveal that detection performance is closely linked to model robustness, with self-supervised (SSL) models providing more reliable representations. While Gaussian noise effectively detects general objects, it performs worse on facial images, whereas Gaussian blur is more effective due to potential frequency artifacts. To further improve detection, we introduce Contrastive Blur, which enhances performance on facial images, and MINDER (MINimum distance DetEctoR), which addresses noise type bias, balancing performance across domains. Beyond performance gains, our work offers valuable insights for both the generative and detection communities, contributing to a deeper understanding of model robustness property utilized for deepfake detection.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-28T13:04:45Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Chung-Ting Tsai</name>
+    </author>
+    <author>
+      <name>Ching-Yun Ko</name>
+    </author>
+    <author>
+      <name>I-Hsin Chung</name>
+    </author>
+    <author>
+      <name>Yu-Chiang Frank Wang</name>
+    </author>
+    <author>
+      <name>Pin-Yu Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2608.17700v1</id>
+    <title>Environment-Invariant Subspace Learning for Generalizable Deepfake Detection</title>
+    <updated>2026-08-18T12:22:21Z</updated>
+    <link href="https://arxiv.org/abs/2608.17700v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2608.17700v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Cross-distribution generalization remains a critical bottleneck in deepfake detection. While recent efforts leverage the semantic priors of large-scale visual foundation models (VFMs), a noteworthy yet underexplored challenge remains: the susceptibility of these semantic priors to environmental interference from factors such as lighting and style. Crucially, this interference establishes spurious correlations between forgery cues and environmental patterns that severely limit generalization. To address this fundamental challenge, we propose an innovative Environment-Invariant Subspace Learning (EISL) framework. The core contribution of EISL is that it aims to disentangle features into orthogonal forgery-relevant invariant factors and environment-related residual factors via a learnable low-rank projection. To facilitate robust feature disentanglement, we also design an Environmental Intervention module that generates diverse and challenging intervention pairs, simulating out-of-distribution environmental shifts to guide the model toward discovering truly invariant forgery representations. Experiments across cross-dataset, cross-generator, whole-face synthesis, and corruption settings show consistent gains and competitive or leading performance against strong detectors, demonstrating improved robustness to unseen forgery types and environmental variations. This work provides a new perspective and a valuable exploration for understanding and tackling the generalization barriers of VFMs in deepfake detection.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-08-18T12:22:21Z</published>
+    <arxiv:comment>12 pages, 4 figures, 11 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Shenghao Chen</name>
+    </author>
+    <author>
+      <name>Hao Jia</name>
+    </author>
+    <author>
+      <name>Chen Li</name>
+    </author>
+    <author>
+      <name>Chunjie Ma</name>
+    </author>
+    <author>
+      <name>Zan Gao</name>
+    </author>
+    <author>
+      <name>Shengyong Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.17730v2</id>
+    <title>AdaptPrompt: Parameter-Efficient Adaptation of VLMs for Generalizable Deepfake Detection</title>
+    <updated>2026-08-21T15:46:48Z</updated>
+    <link href="https://arxiv.org/abs/2512.17730v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.17730v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Detectors of AI-generated images tend to inherit the biases of the data they are trained on: models fitted to GAN imagery learn to treat GAN-specific artifacts as the very definition of "fake" and consequently miss images produced by diffusion models and commercial generation tools. We study this generalization problem from two directions. First, we introduce Diff-Gen, a balanced corpus consisting of 100k diffusion-generated samples and an equally sized set of real images, with the real subset selected to mirror the class distribution of the synthetic data. A spectral analysis shows that, unlike GAN data, Diff-Gen exhibits broad, non-periodic high-frequency energy, and we find that detectors trained on it transfer substantially better to unseen generator families. Second, we propose AdaptPrompt, a parameter-efficient adaptation of CLIP that combines a visual adapter with learnable text prompts and trains roughly 0.1% of the model's parameters. We further observe that truncating the last transformer block of the vision encoder consistently improves detection, suggesting that the final semantic-alignment layers of CLIP suppress the low-level traces on which forensic decisions rely. Across a benchmark of 25 test sets covering GANs, diffusion models, and commercial tools such as Midjourney and DALL-E 3, AdaptPrompt trained on Diff-Gen attains the best mean average precision (98.60%) and accuracy (92.72%), while matching fully fine-tuned baselines at a fraction of their training cost. We also show that the same framework supports data-efficient training and closed-set source attribution across 22 generators.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-19T16:06:03Z</published>
+    <arxiv:comment>Accepted at DFF ACM Multimedia 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yichen Jiang</name>
+    </author>
+    <author>
+      <name>Mohammed Talha Alam</name>
+    </author>
+    <author>
+      <name>Sohail Ahmed Khan</name>
+    </author>
+    <author>
+      <name>Duc-Tien Dang-Nguyen</name>
+    </author>
+    <author>
+      <name>Fakhri Karray</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.15633v4</id>
+    <title>Orthogonal Subspace Decomposition for Generalizable AI-Generated Image Detection</title>
+    <updated>2025-05-20T12:06:56Z</updated>
+    <link href="https://arxiv.org/abs/2411.15633v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.15633v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>AI-generated images (AIGIs), such as natural or face images, have become increasingly important yet challenging. In this paper, we start from a new perspective to excavate the reason behind the failure generalization in AIGI detection, named the \textit{asymmetry phenomenon}, where a naively trained detector tends to favor overfitting to the limited and monotonous fake patterns, causing the feature space to become highly constrained and low-ranked, which is proved seriously limiting the expressivity and generalization. One potential remedy is incorporating the pre-trained knowledge within the vision foundation models (higher-ranked) to expand the feature space, alleviating the model's overfitting to fake. To this end, we employ Singular Value Decomposition (SVD) to decompose the original feature space into \textit{two orthogonal subspaces}. By freezing the principal components and adapting only the remained components, we preserve the pre-trained knowledge while learning fake patterns. Compared to existing full-parameters and LoRA-based tuning methods, we explicitly ensure orthogonality, enabling the higher rank of the whole feature space, effectively minimizing overfitting and enhancing generalization. We finally identify a crucial insight: our method implicitly learns \textit{a vital prior that fakes are actually derived from the real}, indicating a hierarchical relationship rather than independence. Modeling this prior, we believe, is essential for achieving superior generalization. Our codes are publicly available at \href{https://github.com/YZY-stack/Effort-AIGI-Detection}{GitHub}.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-23T19:10:32Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Zhiyuan Yan</name>
+    </author>
+    <author>
+      <name>Jiangming Wang</name>
+    </author>
+    <author>
+      <name>Peng Jin</name>
+    </author>
+    <author>
+      <name>Ke-Yue Zhang</name>
+    </author>
+    <author>
+      <name>Chengchun Liu</name>
+    </author>
+    <author>
+      <name>Shen Chen</name>
+    </author>
+    <author>
+      <name>Taiping Yao</name>
+    </author>
+    <author>
+      <name>Shouhong Ding</name>
+    </author>
+    <author>
+      <name>Baoyuan Wu</name>
+    </author>
+    <author>
+      <name>Li Yuan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.01041v3</id>
+    <title>Generalizable Deepfake Detection Based on Forgery-aware Layer Masking and Multi-artifact Subspace Decomposition</title>
+    <updated>2026-04-11T15:54:44Z</updated>
+    <link href="https://arxiv.org/abs/2601.01041v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.01041v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deepfake detection remains highly challenging, particularly in cross-dataset scenarios and complex real-world settings. This challenge mainly arises because artifact patterns vary substantially across different forgery methods, whereas adapting pretrained models to such artifacts often overemphasizes forgery-specific cues and disturbs semantic representations, thereby weakening generalization. Existing approaches typically rely on full-parameter fine-tuning or auxiliary supervision to improve discrimination. However, they often struggle to model diverse forgery artifacts without compromising pretrained representations. To address these limitations, we propose FMSD, a deepfake detection framework built upon Forgery-aware Layer Masking and Multi-Artifact Subspace Decomposition. Specifically, Forgery-aware Layer Masking evaluates the bias-variance characteristics of layer-wise gradients to identify forgery-sensitive layers, thereby selectively updating them while reducing unnecessary disturbance to pretrained representations. Building upon this, Multi-Artifact Subspace Decomposition further decomposes the selected layer weights via Singular Value Decomposition (SVD) into a semantic subspace and multiple learnable artifact subspaces. These subspaces are optimized to capture heterogeneous and complementary forgery artifacts, enabling effective modeling of diverse forgery patterns while preserving pretrained semantic representations. Furthermore, orthogonality and spectral consistency constraints are imposed to regularize the artifact subspaces, reducing redundancy across them while preserving the overall spectral structure of pretrained weights.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-03T02:33:18Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Xiang Zhang</name>
+    </author>
+    <author>
+      <name>Wenliang Weng</name>
+    </author>
+    <author>
+      <name>Daoyong Fu</name>
+    </author>
+    <author>
+      <name>Beijing Chen</name>
+    </author>
+    <author>
+      <name>Ziqiang Li</name>
+    </author>
+    <author>
+      <name>Ziwen He</name>
+    </author>
+    <author>
+      <name>Zhangjie Fu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2604.17307v2</id>
+    <title>Generalizable Face Forgery Detection via Separable Prompt Learning</title>
+    <updated>2026-09-16T08:30:25Z</updated>
+    <link href="https://arxiv.org/abs/2604.17307v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2604.17307v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Detecting face forgeries using CLIP has recently emerged as a promising direction. However, most existing methods focus on adapting its visual encoder, leaving the potential of the textual encoder largely underexplored. In this paper, we propose Separable Prompt Learning (SePL) to better exploit the text modality, which further enhances the detection capacity. Specifically, SePL distills the forgery knowledge from CLIP via two separate learnable prompts, supported by a cross-modality alignment strategy and dedicated objectives. Extensive experiments demonstrate that our method achieves superior performance under both cross-dataset and cross-method evaluation. The code has been released at https://github.com/OUC-YER/SePL-DeepfakeDetection.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-04-19T07:51:34Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Enrui Yang</name>
+    </author>
+    <author>
+      <name>Baoyuan Wu</name>
+    </author>
+    <author>
+      <name>Yuezun Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2603.01450v1</id>
+    <title>Deepfake Forensics Adapter: A Dual-Stream Network for Generalizable Deepfake Detection</title>
+    <updated>2026-03-02T04:58:00Z</updated>
+    <link href="https://arxiv.org/abs/2603.01450v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2603.01450v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid advancement of deepfake generation techniques poses significant threats to public safety and causes societal harm through the creation of highly realistic synthetic facial media. While existing detection methods demonstrate limitations in generalizing to emerging forgery patterns, this paper presents Deepfake Forensics Adapter (DFA), a novel dual-stream framework that synergizes vision-language foundation models with targeted forensics analysis. Our approach integrates a pre-trained CLIP model with three core components to achieve specialized deepfake detection by leveraging the powerful general capabilities of CLIP without changing CLIP parameters: 1) A Global Feature Adapter is used to identify global inconsistencies in image content that may indicate forgery, 2) A Local Anomaly Stream enhances the model's ability to perceive local facial forgery cues by explicitly leveraging facial structure priors, and 3) An Interactive Fusion Classifier promotes deep interaction and fusion between global and local features using a transformer encoder. Extensive evaluations of frame-level and video-level benchmarks demonstrate the superior generalization capabilities of DFA, particularly achieving state-of-the-art performance in the challenging DFDC dataset with frame-level AUC/EER of 0.816/0.256 and video-level AUC/EER of 0.836/0.251, representing a 4.8% video AUC improvement over previous methods. Our framework not only demonstrates state-of-the-art performance, but also points out a feasible and effective direction for developing a robust deepfake detection system with enhanced generalization capabilities against the evolving deepfake threats. Our code is available at https://github.com/Liao330/DFA.git</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-03-02T04:58:00Z</published>
+    <arxiv:comment>Accepted at ICDF2C 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Jianfeng Liao</name>
+    </author>
+    <author>
+      <name>Yichen Wei</name>
+    </author>
+    <author>
+      <name>Raymond Chan Ching Bon</name>
+    </author>
+    <author>
+      <name>Shulan Wang</name>
+    </author>
+    <author>
+      <name>Kam-Pui Chow</name>
+    </author>
+    <author>
+      <name>Kwok-Yan Lam</name>
+    </author>
+  </entry>
+</feed>

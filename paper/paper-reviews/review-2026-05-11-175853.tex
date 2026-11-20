@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\emergencystretch=2em
+\setlist[itemize]{leftmargin=*, topsep=2pt, itemsep=3pt}
+\setlist[enumerate]{leftmargin=*, topsep=2pt, itemsep=3pt}
+
+\begin{document}
+
+\begin{center}
+{\LARGE Review of ``BiasLN: Efficient Tuning for Generalizable Deepfake Detection Across Benchmarks''}\\[0.5em]
+{\large Manuscript reviewed: \texttt{BiasLN\_final.tex}}\\[0.25em]
+2026-05-11
+\end{center}
+
+\section*{Overall assessment}
+This is a promising and mostly readable manuscript. The core method---tuning only bias terms and LayerNorm affine parameters on top of a frozen CLIP encoder---is simple, plausible, and well aligned with the stated goal of reducing overfitting. I explicitly checked the displayed equations for branch conventions, sign conventions, symbol definitions, dimensional consistency, and implementation ambiguity. I did not find inverse-trig or coordinate-branch problems, and the checked table averages are arithmetically consistent. The main weaknesses are instead in the evaluation framing, checkpoint-selection evidence, reproducibility of the written training objective, and reference integrity. For the notation/terminology-drift check, I did not find serious drift among the main mathematical symbols $\mathbf{f}$, $\tilde{\mathbf{f}}$, $\hat{y}$, $h_{\phi}$, and $\mathcal{L}_{\text{ce}}$; the clearest drift is protocol-level, where CDF-v2 is used for validation and later described as an ``unseen'' test benchmark.
+
+\section*{Most important technical findings}
+
+\paragraph{1. [Definite internal inconsistency] CDF-v2 is not fully ``unseen'' once it is used for checkpoint selection.}
+\begin{itemize}
+    \item \textbf{Location:} Introduction (lines 78--84), Experiments (lines 267--270), Results (line 353), and Limitations (line 442).
+    \item \textbf{Problem:} The manuscript says BiasLN is evaluated on ``five unseen datasets,'' but it also states that a held-out subset of CDF-v2 is used for validation during checkpoint selection.
+    \item \textbf{Why it matters:} Even with a disjoint split, the model-selection procedure has already used target-domain information from CDF-v2. That means CDF-v2 should not be described as fully unseen at the dataset level, and averages that include CDF-v2 should not be framed as averages over five untouched unseen datasets.
+    \item \textbf{Suggested fix:} Either relabel CDF-v2 as an auxiliary validation domain and report a separate cross-dataset average over the truly untouched test sets, or choose a different validation source that is not also part of the reported evaluation table. Then update every sentence that currently says ``five unseen datasets.''
+\end{itemize}
+
+\paragraph{2. [Definite equation/prose mismatch] The displayed loss does not match the stated training procedure.}
+\begin{itemize}
+    \item \textbf{Location:} Classification Head and Training Objective (lines 180--184) and Training Configuration (line 222).
+    \item \textbf{Problem:} The text says the model uses \emph{class-weighted} cross-entropy with label smoothing and specifies $w_{\mathrm{fake}}:w_{\mathrm{real}} = 2:1$, but the displayed loss is
+    \[
+    \mathcal{L}_{\text{ce}} = - \sum_{c=1}^{C} \tilde{y}_c \log p_c,
+    \]
+    which is unweighted. In addition, $C$ is not defined, and the mapping from logits $\hat{y}$ to probabilities $p_c$ is left implicit.
+    \item \textbf{Why it matters:} This is the main training objective. As written, the math is not faithful to the stated implementation and is not fully reproducible.
+    \item \textbf{Suggested fix:} Either change the prose to ordinary label-smoothed cross-entropy, or update the equation to the weighted form, for example
+    \[
+    \mathcal{L}_{\text{ce}} = - \sum_{c=1}^{C} w_c\, \tilde{y}_c \log p_c,
+    \qquad p = \mathrm{softmax}(\hat{y}),
+    \qquad C = 2,
+    \]
+    and define $\tilde{y}_c$ explicitly for the chosen smoothing factor.
+\end{itemize}
+
+\paragraph{3. [Unsupported claim] The validation figure does not support the stated conclusion about source-domain validation.}
+\begin{itemize}
+    \item \textbf{Location:} ``Importance of Cross-Domain Validation'' (lines 375--385).
+    \item \textbf{Problem:} The validation-loss figure is described as showing training loss on FF++ and validation loss on a held-out CDF-v2 subset. The text then concludes that ``validating on the source domain is largely uninformative,'' but no source-domain validation curve, source-domain validation AUC, or checkpoint-ranking comparison is actually shown.
+    \item \textbf{Why it matters:} This checkpoint-selection claim is one of the paper's central messages. The current evidence supports a weaker statement---that source-domain \emph{training loss} is uninformative for transfer---not the stronger claim about source-domain validation.
+    \item \textbf{Suggested fix:} Either add source-domain validation evidence (for example, FF++ validation AUC or a checkpoint-selection comparison) or soften the text so it matches the evidence currently presented.
+\end{itemize}
+
+\paragraph{4. [Likely comparison-fairness issue] The baseline checkpoint-selection rule is not made clearly comparable to BiasLN.}
+\begin{itemize}
+    \item \textbf{Location:} Experiments (lines 267--270 and 384) and the comparison-table caption (lines 311--314).
+    \item \textbf{Problem:} BiasLN uses a held-out subset of CDF-v2 for checkpoint selection, but the table caption says baseline numbers come from released checkpoints when available or from training that follows the original implementations. The manuscript does not state whether those baselines were selected using the same cross-domain validation rule.
+    \item \textbf{Why it matters:} The paper itself argues that checkpoint selection materially affects out-of-domain generalization. If BiasLN benefits from a cross-domain model-selection signal that some baselines do not receive, the comparison may not be apples-to-apples.
+    \item \textbf{Suggested fix:} State the checkpoint-selection rule for each baseline. Ideally, re-run the baselines that can be reproduced under the same validation protocol, or clearly separate those numbers from author-released checkpoints selected under different rules.
+\end{itemize}
+
+\paragraph{5. [Likely reporting issue] The cross-dataset average mixes different denominators across methods.}
+\begin{itemize}
+    \item \textbf{Location:} The cross-dataset/cross-method comparison table, especially rows with ``--'' in UADFV (lines 324--343), and the summary claim in line 353.
+    \item \textbf{Problem:} Several methods have no UADFV score, so their \textbf{Avg(D)} is computed over four datasets, whereas other rows are averaged over five.
+    \item \textbf{Why it matters:} Ranking methods by \textbf{Avg(D)} is then not strictly comparable across all rows, because some methods are missing one domain from the average.
+    \item \textbf{Suggested fix:} Add a note that \textbf{Avg(D)} is computed over available datasets only, and also report a common-split average over the subset shared by all methods.
+\end{itemize}
+
+\paragraph{6. [Reproducibility gap] The augmentation recipe is underspecified.}
+\begin{itemize}
+    \item \textbf{Location:} Data Augmentation (lines 207--213).
+    \item \textbf{Problem:} Probabilities are given for flipping, rotation, blur, and brightness, but not for contrast adjustment or JPEG compression simulation.
+    \item \textbf{Why it matters:} The augmentation pipeline is part of the training recipe. Missing probabilities make the experimental setup harder to reproduce exactly.
+    \item \textbf{Suggested fix:} State the application probabilities explicitly, or say that these transforms are always applied.
+\end{itemize}
+
+\section*{Meaningful editorial and reference findings}
+
+\paragraph{1. [Definite citation error] Dataset citations in the dataset table are mismatched.}
+\begin{itemize}
+    \item \textbf{Location:} The dataset table, especially lines 253 and 257.
+    \item \textbf{Problem:} \textbf{DFD} is cited as \texttt{rossler2019ff}, which is the FaceForensics++ paper rather than the Google DeepFake Detection dataset, and \textbf{DFDC} is cited as \texttt{dolhansky2019dfdcp}, which is the preview-set paper rather than the DFDC dataset paper \texttt{dolhansky2020dfdc} already present in the bibliography.
+    \item \textbf{Why it matters:} These are factual citation mismatches in a core dataset table. They weaken confidence in the benchmark description and are easy for readers to notice.
+    \item \textbf{Suggested fix:} Change the DFD citation to the correct DFD source already listed as \texttt{dufour2019dfd}, and change the DFDC citation to \texttt{dolhansky2020dfdc}.
+\end{itemize}
+
+\paragraph{2. [Definite reference-list defect] The same LayerNorm-tuning preprint appears twice under two different keys.}
+\begin{itemize}
+    \item \textbf{Location:} Main text citations (lines 106 and 156) and bibliography entries \texttt{wang2022ln} (lines 492--495) and \texttt{qi2022layernorm} (lines 569--572).
+    \item \textbf{Problem:} Both entries resolve to the same arXiv identifier, \texttt{arXiv:2211.08682}, but they appear under different keys with inconsistent author metadata and title formatting.
+    \item \textbf{Why it matters:} Duplicate references with conflicting metadata make the bibliography look unreliable and can confuse readers about what prior work is actually being cited.
+    \item \textbf{Suggested fix:} Consolidate these into one bibliography entry and one citation key, then update all in-text citations accordingly.
+\end{itemize}
+
+\paragraph{3. [Meaningful consistency issue] AUC is reported on different numeric scales across tables without explicit warning.}
+\begin{itemize}
+    \item \textbf{Location:} The in-domain results table (lines 297--301) versus the comparison and ablation tables (lines 324--344 and 412--420).
+    \item \textbf{Problem:} The in-domain table reports AUC as percentages (for example, 99.9), whereas the other tables report AUC on the unit interval (for example, 0.971), but the captions do not call out the scale change.
+    \item \textbf{Why it matters:} The metric is nominally the same, so silently switching scales makes quick cross-table reading harder and can cause avoidable confusion.
+    \item \textbf{Suggested fix:} Standardize all AUC tables to one scale, or explicitly mark percentage-format tables in the caption and column headings.
+\end{itemize}
+
+\paragraph{4. The abstract opens with a grammatical error that obscures the first claim.}
+\begin{itemize}
+    \item \textbf{Location:} Abstract (line 55).
+    \item \textbf{Problem:} The sentence ``The rapid development of deepfake generation methods, achieving strong generalization to unseen manipulation techniques remains a key challenge for many detection models'' is grammatically malformed.
+    \item \textbf{Why it matters:} This is the first sentence readers see, so it affects both clarity and professionalism.
+    \item \textbf{Suggested fix:} Rewrite the sentence so the concessive setup and main clause are grammatically connected.
+    \item \textbf{Candidate rewrite:} ``Although deepfake generation methods have advanced rapidly, strong generalization to unseen manipulation techniques remains a key challenge for many detection models.''
+\end{itemize}
+
+\section*{Proofing sweep}
+The bundled proofing scan on the manuscript source returned no automatic hits, but a short manual sweep still found a few obvious, high-confidence defects worth fixing:
+\begin{itemize}
+    \item \textbf{Evaluation Benchmark, line 282:} ``aproachs'' should be ``approaches.''
+    \item \textbf{Cross-method naming, lines 276, 322, and 353:} ``FaceDancer'' in the prose becomes ``FaceDan'' in the table and later discussion. Use one name consistently.
+    \item \textbf{Introduction, line 91:} ``The official source code is updated at \href{https://github.com/ducthinh4477/BiasLN}{GitHub}'' is awkward. A cleaner version is ``The official source code is available at \href{https://github.com/ducthinh4477/BiasLN}{GitHub}.''
+    \item \textbf{Introduction, line 65:} ``Generative models'' and ``Diffusion Models'' should normally be lowercased unless they are being treated as formal proper names.
+\end{itemize}
+
+\section*{Highest-priority fixes before submission}
+\begin{enumerate}
+    \item Reframe the CDF-v2 protocol honestly: either stop calling it unseen, or remove it from the unseen cross-dataset summary and headline claims.
+    \item Make the checkpoint-selection evidence match the claim by adding source-domain validation results or weakening the claim accordingly.
+    \item Fix the loss equation so it matches the weighted, label-smoothed objective described in prose and defines all symbols used in the objective.
+    \item Clarify the comparison protocol so that baseline checkpoint selection is as explicit and fair as the BiasLN checkpoint-selection procedure.
+    \item Clean up the dataset citations and duplicate bibliography entry before submission, because these are easy, high-visibility fixes.
+\end{enumerate}
+
+\section*{Items needing external verification}
+\begin{itemize}
+    \item Before a camera-ready or archival submission, confirm the final bibliographic metadata for the recent references \texttt{yan2025effort}, \texttt{cui2025forada}, and \texttt{yermakov2025gend}, which currently look provisional.
+    \item If the DFD blog-style source is retained, replace the generic ``\texttt{https://googleblog.com}'' entry with the exact post URL and final access details.
+\end{itemize}
+
+\end{document}

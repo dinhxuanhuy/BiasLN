@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor,booktabs,enumitem}
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+\usepackage{xurl}
+\usepackage{xr}\externaldocument{BiasLN_revised}
+\setlist{topsep=2pt,itemsep=2pt}
+\newif\ifpending\pendingtrue
+\newcommand{\pending}[1]{\ifpending\textcolor{red}{[#1]}\else\errmessage{pending: #1}\fi}
+\IfFileExists{generated/numbers.tex}{\input{generated/numbers.tex}}{}
+\IfFileExists{generated/drift_numbers.tex}{\input{generated/drift_numbers.tex}}{}
+\newcommand{\num}[1]{\ifcsname #1\endcsname\csname #1\endcsname\else\textcolor{red}{??}\fi}
+\newenvironment{comment}{\par\medskip\noindent\begin{minipage}{\linewidth}\color{black!70}\itshape}{\end{minipage}\par\smallskip}
+\newcommand{\resp}{\noindent\textbf{Response.}~}
+\newcommand{\change}{\noindent\textbf{Change in the manuscript.}~}
+
+\title{Response to the Reviewers\\[2pt]\normalsize Manuscript ``BiasLN: Efficient Tuning for Generalizable Deepfake Detection Across Benchmarks''\\EAI Endorsed Transactions on Smart Cities}
+\author{Xuan-Huy Dinh, Minh-Duc Vu, Thanh-Quan Phung-Le, Duc-Thinh Nguyen, Van-Dung Hoang}
+\date{}
+
+\begin{document}
+\maketitle
+
+We thank both reviewers for their careful reading. Their comments led us to re-examine our evaluation protocol, and in doing so we found that it was more favourable to our method than the manuscript stated. We have therefore re-run \emph{all} experiments, including the baselines, under a protocol that never uses test data for model selection, and we report the results over several seeds with significance tests. The revised manuscript also contains an analysis of what bias and LayerNorm tuning can express and how the two parameter groups overlap, ablations that change one factor at a time, measured training and inference costs, and corrected references. Reviewer comments are reproduced in italics (abridged where long); section, table and figure numbers refer to the revised manuscript.
+
+\section*{Summary of the main changes}
+\begin{enumerate}
+\item \textbf{Protocol.} Every method now selects its checkpoint on the FaceForensics++ validation split. An automated audit confirms that this split shares no frame and no video with any test set (Sec.~\ref{sec:protocol}). GenD and Effort were re-implemented and re-trained with the same data, augmentation and selection rule.
+\item \textbf{Statistics.} Results are the mean $\pm$ standard deviation over seeds; differences are tested with paired $t$-tests across seeds and DeLong tests (Sec.~\ref{sec:protocol}, Tables~\ref{tab:main}, \ref{tab:roles}--\ref{tab:indomain}).
+\item \textbf{What was wrong before.} While preparing the revision we found that our original training code (i) reads the Celeb-DF-v2 \emph{test} split for validation unless a separate split file is supplied, and (ii) stores a ``best'' checkpoint for every test dataset. \pending{Authors: confirm which split file and which checkpoint produced the first-version numbers, and adjust this sentence.} The numbers of the first version should therefore be regarded as optimistic. Under the new protocol the same configuration reaches \num{AvgDBiasln} instead of 0.934 average AUC over the four cross-dataset test sets (Sec.~\ref{sec:protocol}). As the revised manuscript describes only the protocol that is now used, this account of the change is given here in the letter.
+\item \textbf{Contribution.} We clarified the conceptual contribution of BiasLN (Sec.~\ref{sec:analysis}): a LayerNorm shift is exactly a tied update of the following biases and the key biases receive no gradient, so BiasLN is the complete per-channel affine adaptation of the frozen encoder, with the LayerNorm scales as its only multiplicative part. The ablations now isolate each component under the same protocol (Tables~\ref{tab:ablation} and~\ref{tab:roles}).
+\item \textbf{Cost.} Training throughput, peak memory, inference latency, FLOPs and checkpoint size are measured on one GPU for all methods (Table~\ref{tab:cost}).
+\item \textbf{References and writing.} All flagged references were corrected, preprints were replaced by their peer-reviewed versions where these exist, and the text was revised throughout.
+\end{enumerate}
+
+% ======================================================================
+\section*{Reviewer 1}
+
+\begin{comment}
+Novelty: Low to moderate. BitFit and LayerNorm tuning both already exist, and GenD already tunes LayerNorm on CLIP for this task. Combining them is a sensible engineering choice, but it is incremental.
+\end{comment}
+\resp We agree that both components exist and that GenD tunes LayerNorm for this task; the revision states this explicitly and no longer presents the combination as a new technique. We have clarified what the combination contributes. First, an analysis (Propositions~\ref{prop:key}--\ref{prop:fold}): a LayerNorm shift equals a tied update of the following biases, and the key biases receive no gradient, so BiasLN covers exactly the per-channel affine parameters of the encoder (all additive shifts plus the LayerNorm scales) and nothing that changes the weight matrices. This explains why bias tuning, LayerNorm tuning and BiasLN behave similarly and what the scales add. Second, a controlled comparison: under the same leakage-free protocol, BiasLN reaches \num{AvgDBiasln} cross-dataset average AUC, compared with \num{AvgDBitfit} for bias-only and \num{AvgDLnLC} for LayerNorm-only tuning (Table~\ref{tab:ablation}), and is comparable with re-trained GenD (\num{AvgDGend}) without its auxiliary losses and above Effort (\num{AvgDEffort}) without its inference overhead. We state openly that the gains over each component alone are small. \pending{significance of BiasLN vs.\ BitFit / LN / GenD after all seeds.} We also discuss the concurrent bias-only method BPL (ICML 2026).\\
+\change Abstract, contribution list (Sec.~1), Related Work, Sec.~\ref{sec:analysis}, Sec.~\ref{sec:ablation}.
+
+\begin{comment}
+Innovation impact: the gains are small: the cross-dataset average is 0.9454 vs.\ 0.9446 for ForAda.
+\end{comment}
+\resp We agree that a 0.0008 difference is not meaningful, and under a leakage-free protocol the first-version number does not hold. We removed all claims of superiority over published methods. Published numbers (including Forensics Adapter, whose training code we could not align with our protocol) are now listed separately in Table~\ref{tab:literature} and labelled as not comparable. Most of these numbers are taken from Table~1 of Effort, which does not evaluate UADFV; the first version therefore averaged five datasets for some methods and four for others. We now follow the Effort protocol exactly: the cross-dataset average is over CDF-v2, DFD, DFDC and DFDCP for every row, and UADFV is no longer used. All comparisons that we make are paired, re-trained and reported with standard deviations. \pending{state the significant differences after seeds 1--2.}\\
+\change Sec.~\ref{sec:main}, Tables~\ref{tab:main}--\ref{tab:literature}.
+
+\begin{comment}
+The checkpoint is selected on a Celeb-DF-v2 subset, and CDF-v2 is also a test set, which gives BiasLN target-domain information the baselines didn't have.
+\end{comment}
+\resp This was a valid and important concern. Moreover, our original code read the CDF-v2 test split for validation unless a separate split file was supplied, so the overlap may have been larger than a ``subset''. All methods now select on the FF++ validation split, disjoint from every test set. The revised manuscript also explains how recent methods select their checkpoints (Effort through the DeepfakeBench trainer, which keeps a best checkpoint per test dataset; GenD on a validation set drawn from datasets that are also among its test benchmarks) and why such selection makes cross-dataset results optimistic. Published numbers are therefore reported separately from our controlled re-training (Tables~\ref{tab:comparison} and~\ref{tab:main}).\\
+\change Sec.~\ref{sec:protocol} (paragraph ``Checkpoint selection), Tables~\ref{tab:comparison} and~\ref{tab:main}, Limitations.
+
+\begin{comment}
+Results are reported without standard deviations. Table~4 claims a five-run average, yet its numbers are identical to the single values in Table~3, except for DFDC. Explain why the Table~4 average leaves out DFDCP.
+\end{comment}
+\resp The reviewer is right: the earlier ablation row of BiasLN reused single-run values, and DFDCP had been omitted. All tables are now generated automatically from the run outputs by a script in the released code, include all four cross-dataset test sets of the Effort protocol (CDF-v2, DFD, DFDC, DFDCP; UADFV, which most published methods do not report, is no longer used), and report the number of seeds $n$ and the standard deviation.\\
+\change Tables~\ref{tab:main}, \ref{tab:roles}--\ref{tab:indomain}.
+
+\begin{comment}
+The full fine-tuning baseline (DFD 0.495, below chance) looks under-trained.
+\end{comment}
+\resp The earlier run used the PEFT learning rate ($3\times10^{-4}$) for all 303M encoder weights, which destroys the pre-trained features. The new baseline uses $10^{-5}$ for the encoder and $3\times10^{-4}$ for the head, with the same schedule and selection rule; we also add a linear probe as a lower bound. \pending{full FT numbers (run in progress).}\\
+\change Table~\ref{tab:main}, Sec.~\ref{sec:impl}.
+
+\begin{comment}
+Training time and memory figures would support the ``resource-efficient'' claim.
+\end{comment}
+\resp Added (Table~\ref{tab:cost}): on an A100-40GB in fp32, BiasLN trains at 46.5 images/s with 12.2\,GB peak memory versus 32.8 images/s and 19.7\,GB for full fine-tuning, stores a 1.3\,MB checkpoint (vs.\ 1.16\,GB), and has exactly the inference cost of the frozen CLIP encoder (17.2\,ms per image, 162 GFLOPs), whereas Effort needs 23.8\,ms. We state that training costs of the PEFT methods are similar.
+
+\begin{comment}
+References: the LSDA, ProDet, CDFA, ForAda and IID entries have titles or authors that don't match the actual papers. DF40 is listed as CVPRW; it was published at NeurIPS 2024.
+\end{comment}
+\resp Thank you; all were wrong and are corrected: LSDA is Yan et al., CVPR 2024; ProDet is Cheng et al., NeurIPS 2024; CDFA is Lin et al., ECCV 2024; ForAda is the Forensics Adapter of Cui et al., CVPR 2025; IID is Huang et al., CVPR 2023; DF40 is Yan et al., NeurIPS 2024 (Datasets and Benchmarks). While checking we also corrected SLADD (Chen et al., CVPR 2022, previously pointing to an unrelated paper), SRM (Luo et al., CVPR 2021), GenD (now WACV 2026), Giannou et al.\ (COLT 2023), the diffusion survey (ACM CSUR 56(4)) and the dataset citations of DFD and DFDC.
+
+\begin{comment}
+Writing: grammar errors (``outperforms than'', ``supports to improve'', ``aproachs''). Fig.~3 appears to be missing, Fig.~4 is never discussed, and the GitHub link is absent.
+\end{comment}
+\resp The text was rewritten and the listed errors removed. Every figure is now referenced before it appears. The old training-loss figure and the self-attention figure were removed: the former was based on the CDF-v2 validation that we abandoned, and the latter was not discussed and came from checkpoints of the old protocol. The t-SNE figure is kept, re-computed for checkpoints of the new protocol, and complemented by a Fisher-ratio measure of class separation (Sec.~\ref{sec:feat}). The code link is given at the end of the Introduction: \url{https://github.com/ducthinh4477/BiasLN}.
+
+% ======================================================================
+\section*{Reviewer 2}
+
+\begin{comment}
+Limited scientific novelty, as BiasLN combines two previously established techniques; clarify the conceptual contribution, demonstrate the specific advantages of combining both techniques, and determine whether the improvements reflect a generalizable contribution or an incremental optimization.
+\end{comment}
+\resp Please see our first response to Reviewer~1. In short: the conceptual contribution is the analysis of Sec.~\ref{sec:analysis}, which shows that BiasLN is the complete per-channel affine adaptation of the encoder and how the bias and LayerNorm groups overlap; the specific advantages of the combination are measured against each component alone under identical conditions (Table~\ref{tab:ablation}, Table~\ref{tab:roles}); and its generality is assessed on four unseen datasets and seven unseen manipulation methods with results over seeds. We report honestly that the advantage over each component is small, and that BiasLN's practical benefits are simplicity (no auxiliary loss, no added module), the highest in-domain accuracy, and the unchanged inference cost.
+
+\begin{comment}
+The improvements over GenD are relatively small, and no statistical significance analysis is provided.
+\end{comment}
+\resp GenD is now re-trained on the same seeds, data and selection rule, so all comparisons are paired. We report mean $\pm$ std, paired $t$-tests across seeds (Holm-corrected over test sets) and DeLong tests on the seed-averaged video scores. \pending{summarize significant / non-significant differences vs.\ GenD.}
+
+\begin{comment}
+The mathematical formulation of the loss function does not explicitly incorporate the class weights described in the experimental configuration.
+\end{comment}
+\resp Corrected. Eq.~\eqref{eq:ce} is now exactly the implemented loss, including the class weights $w_0=1$, $w_1=2$, the label smoothing $\alpha=0.1$ and the normalization by $\sum_i w_{y_i}$; a unit test in the released code checks it against the PyTorch implementation. We also corrected the label convention (0 = real, 1 = fake).
+
+\begin{comment}
+Selecting the model using a subset of Celeb-DF-v2 raises concerns regarding evaluation independence and the scope of the generalization claims.
+\end{comment}
+\resp Please see our third response to Reviewer~1: all models now select on FF++ validation data with an audited disjointness from every test set, and the revised Sec.~\ref{sec:protocol} discusses how checkpoint selection on target-domain data inflates cross-dataset results.
+
+\begin{comment}
+The ablation experiments do not fully isolate the contribution of each component, while the comparative results lack confidence intervals and statistical significance testing.
+\end{comment}
+\resp Every ablation now changes one factor while keeping data, loss, schedule, head and selection fixed: the PEFT method and the feature normalization (Table~\ref{tab:ablation}, in the layout of the original Table~4: full fine-tuning, LoRA, BitFit, LayerNorm and BiasLN, each with and without $L_2$ normalization where applicable) and the tuned parameter subset inside BiasLN (Table~\ref{tab:roles}, including bias roles and the LayerNorm scale and shift separately). All rows report $n$ seeds and standard deviations.
+
+\begin{comment}
+Computational efficiency is assessed primarily through the number of trainable parameters, without rigorous measurements of training time, memory consumption, or inference cost; reducing the number of trainable parameters does not necessarily translate into lower inference costs; latency, energy, memory, resource-constrained devices.
+\end{comment}
+\resp We agree with the reviewer's point and now state it explicitly: a small trainable budget lowers training memory and storage, but inference cost is determined by the backbone. Table~\ref{tab:cost} reports measured training throughput and memory, inference latency, FLOPs and checkpoint size for all methods; BiasLN keeps the inference cost of the frozen encoder exactly, while Effort and unmerged LoRA add latency. We did not measure energy or run on edge hardware; the Limitations section now states that the ViT-L/14 backbone (162 GFLOPs per image) is too large for such devices and that distillation into a smaller encoder is required.
+
+\begin{comment}
+Reliance on public benchmark datasets and the absence of evaluations under real-world operating conditions; complete video sequences, variable acquisition conditions, emerging manipulation techniques.
+\end{comment}
+\resp We added these limitations explicitly (frame-based scoring without temporal modelling, pre-cropped faces, no entire-face synthesis or diffusion editing). The evaluation covers four cross-dataset benchmarks with different acquisition conditions and seven recent face-swapping methods from DF40.
+
+\begin{comment}
+References: preprints and non-peer-reviewed sources; incomplete entries; lacks a critical comparison with BitFit, LayerNorm tuning and GenD.
+\end{comment}
+\resp Preprints were replaced by peer-reviewed versions where they exist (GenD, WACV 2026; Giannou et al., COLT 2023). The remaining preprints (DFDC and DFDCP dataset reports, LayerNorm tuning of Qi et al.) are kept because they are the primary sources and are labelled as preprints. The Related Work section now compares our analysis critically with BitFit, LayerNorm tuning, GenD, Namazifar et al.\ on key-bias redundancy, and the concurrent BPL.
+
+\begin{comment}
+Writing quality, repetition across introduction, results and conclusions; interpretations beyond the evidence; inconsistencies in metrics, figures and tables.
+\end{comment}
+\resp The manuscript was rewritten. Efficiency is discussed once, with measurements (Sec.~\ref{sec:cost}). All AUC values use the same scale, and all result tables are generated from the experiment outputs, so text, tables and figures cannot drift apart. Claims are limited to what the paired tests support.
+
+\bigskip
+\noindent We hope that the revised manuscript addresses the reviewers' concerns, and we thank them again for comments that substantially improved the work.
+
+\end{document}
