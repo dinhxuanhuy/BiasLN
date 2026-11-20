@@ -1,0 +1,27 @@
+{
+ "id": "xuanhuydinh/biasln-l4-additive",
+ "title": "biasln-l4-additive",
+ "code_file": "biasln-l4-additive.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": true,
+ "enable_tpu": false,
+ "enable_internet": false,
+ "keywords": [],
+ "dataset_sources": [
+  "xuanhuydinh/biasln-code",
+  "xuanhuydinh/deepfakebench",
+  "xuanhuydinh/deepfake40"
+ ],
+ "kernel_sources": [
+  "xuanhuydinh/biasln-prep2",
+  "xuanhuydinh/biasln-clip"
+ ],
+ "competition_sources": [
+  "gemma-4-developer-agent"
+ ],
+ "model_sources": [],
+ "docker_image": "gcr.io/kaggle-private-byod/python@sha256:de153e6d303881930c51286216393d56f56b26458d0661350305a1e8144eea01",
+ "machine_shape": "NvidiaL4"
+}

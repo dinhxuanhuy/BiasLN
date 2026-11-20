@@ -1,0 +1,593 @@
+2026-11-13 15:18:53,605 - INFO - Run dir: logs/val/effort_s1024
+2026-11-13 15:18:53,606 - INFO - Selection protocol: val on ['FaceForensics++'] (split=val)
+2026-11-13 15:18:53,615 - INFO - Configuration:
+SWA: false
+all_dataset:
+- FaceForensics++
+- FF-F2F
+- FF-DF
+- FF-FS
+- FF-NT
+- FaceShifter
+- DeepFakeDetection
+- Celeb-DF-v1
+- Celeb-DF-v2
+- DFDCP
+- DFDC
+- DeeperForensics-1.0
+- UADFV
+amp: bf16
+aux_loss: none
+backbone_lr: null
+backbone_name: vit
+clip_model_name: openai/clip-vit-large-patch14
+compact_ckpt: true
+compression: c23
+cuda: true
+cudnn: true
+data_aug:
+  blur_limit:
+  - 3
+  - 7
+  blur_prob: 0.5
+  brightness_limit:
+  - -0.1
+  - 0.1
+  brightness_prob: 0.5
+  contrast_limit:
+  - -0.1
+  - 0.1
+  flip_prob: 0.5
+  quality_lower: 40
+  quality_upper: 100
+  rotate_limit:
+  - -10
+  - 10
+  rotate_prob: 0.5
+dataset_json_folder: ./preprocessing/dataset_json
+ddp: false
+dry_run: false
+effort_keep_rank: 1023
+effort_orth_lambda: 0.0
+feature_dim: 1024
+frame_num:
+  test: 32
+  train: 8
+l2_norm: false
+label_dict:
+  CelebDFv1_fake: 1
+  CelebDFv1_real: 0
+  CelebDFv2_fake: 1
+  CelebDFv2_real: 0
+  Chameleon_Fake: 1
+  Chameleon_Real: 0
+  CollabDiff_Fake: 1
+  CollabDiff_Real: 0
+  Collaborative_Diffusion_Fake: 1
+  Collaborative_Diffusion_Real: 0
+  DF40_train_Fake: 1
+  DF40_train_Real: 0
+  DFDCP_FakeA: 1
+  DFDCP_FakeB: 1
+  DFDCP_Real: 0
+  DFDC_Fake: 1
+  DFDC_Real: 0
+  DFD_fake: 1
+  DFD_real: 0
+  DF_fake: 1
+  DF_real: 0
+  DiT_Fake: 1
+  DiT_Real: 0
+  EFSAll_Fake: 1
+  EFSAll_Real: 0
+  FF-DF: 1
+  FF-F2F: 1
+  FF-FH: 1
+  FF-FS: 1
+  FF-NT: 1
+  FF-SH: 1
+  FF-real: 0
+  FRAll_Fake: 1
+  FRAll_Real: 0
+  FSAll_Fake: 1
+  FSAll_Real: 0
+  GPA_fake: 1
+  GPA_real: 0
+  MRAA_Fake: 1
+  MRAA_Real: 0
+  MidJourney_Fake: 1
+  MidJourney_Real: 0
+  SiT_Fake: 1
+  SiT_Real: 0
+  StyleGAN2_Fake: 1
+  StyleGAN2_Real: 0
+  StyleGAN3_Fake: 1
+  StyleGAN3_Real: 0
+  StyleGANXL_Fake: 1
+  StyleGANXL_Real: 0
+  UADFV_Fake: 1
+  UADFV_Real: 0
+  VQGAN_Fake: 1
+  VQGAN_Real: 0
+  adm_Fake: 1
+  adm_Real: 0
+  biggan_Fake: 2
+  biggan_Real: 0
+  blendface_Fake: 1
+  blendface_Real: 0
+  dalle2_face_Fake: 1
+  dalle2_face_Real: 0
+  danet_Fake: 1
+  danet_Real: 0
+  ddim_Fake: 1
+  ddim_Real: 0
+  deepfacelab_Fake: 1
+  deepfacelab_Real: 0
+  e4e_Fake: 1
+  e4e_Real: 0
+  e4s_Fake: 1
+  e4s_Real: 0
+  facedancer_Fake: 1
+  facedancer_Real: 0
+  faceswap_Fake: 1
+  faceswap_Real: 0
+  facevid2vid_Fake: 1
+  facevid2vid_Real: 0
+  fomm_Fake: 1
+  fomm_Real: 0
+  fsgan_Fake: 1
+  fsgan_Real: 0
+  glide_Fake: 3
+  glide_Real: 0
+  heygen_Fake: 1
+  heygen_Real: 0
+  hyperreenact_Fake: 1
+  hyperreenact_Real: 0
+  inswap_Fake: 1
+  inswap_Real: 0
+  lia_Fake: 1
+  lia_Real: 0
+  mcnet_Fake: 1
+  mcnet_Real: 0
+  midjourney_Fake: 4
+  midjourney_Real: 0
+  mobileswap_Fake: 1
+  mobileswap_Real: 0
+  mraa_Fake: 1
+  mraa_Real: 0
+  one_shot_free_Fake: 1
+  one_shot_free_Real: 0
+  pirender_Fake: 1
+  pirender_Real: 0
+  pixart_Fake: 1
+  pixart_Real: 0
+  rddm_Fake: 1
+  rddm_Real: 0
+  roop_Fake: 1
+  roop_Real: 0
+  sadtalker_Fake: 1
+  sadtalker_Real: 0
+  sd1.5_Fake: 1
+  sd1.5_Real: 0
+  sd2.1_Fake: 1
+  sd2.1_Real: 0
+  sdv4_Fake: 5
+  sdv4_Real: 0
+  sdv5_Fake: 6
+  sdv5_Real: 0
+  simswap_Fake: 1
+  simswap_Real: 0
+  stargan_Fake: 1
+  stargan_Real: 0
+  starganv2_Fake: 1
+  starganv2_Real: 0
+  styleclip_Fake: 1
+  styleclip_Real: 0
+  tpsm_Fake: 1
+  tpsm_Real: 0
+  uniface_Fake: 1
+  uniface_Real: 0
+  vqdm_Fake: 7
+  vqdm_Real: 0
+  wav2lip_Fake: 1
+  wav2lip_Real: 0
+  whichisreal_Fake: 1
+  whichisreal_Real: 0
+  wukong_Fake: 8
+  wukong_Real: 0
+label_smoothing: 0.0
+lambda_aux: 0.0
+last_k_blocks: 0
+lmdb: false
+lmdb_dir: ./datasets/lmdb
+local_rank: 0
+log_dir: logs/val
+lora_alpha: 16.0
+lora_dropout: 0.0
+lora_rank: 8
+lora_targets:
+- q_proj
+- v_proj
+lr_T_max: 10
+lr_eta_min: 1.0e-05
+lr_scheduler: null
+manualSeed: 1024
+mean:
+- 0.48145466
+- 0.4578275
+- 0.40821073
+metric_scoring: auc
+mode: train
+model_name: effort
+nEpochs: 10
+ngpu: 1
+normalize_eps: 1.0e-06
+optimizer:
+  adam:
+    amsgrad: false
+    beta1: 0.9
+    beta2: 0.999
+    eps: 1.0e-08
+    lr: 0.0002
+    weight_decay: 0.0005
+  type: adam
+pretrained: null
+resolution: 224
+rgb_dir: ./datasets/rgb
+run_dir: logs/val/effort_s1024
+save_avg: false
+save_ckpt: true
+save_every_epoch: true
+save_feat: false
+scheduler_step_per_epoch: true
+selection: val
+selection_key: FaceForensics++
+start_epoch: 0
+std:
+- 0.26862954
+- 0.26130258
+- 0.27577711
+test_batchSize: 128
+test_dataset:
+- Celeb-DF-v2
+- DeepFakeDetection
+- DFDC
+- DFDCP
+- UADFV
+train_batchSize: 16
+train_dataset:
+- FaceForensics++
+tuning_mode: effort
+use_consistency_views: false
+use_data_augmentation: true
+val_dataset:
+- FaceForensics++
+val_split: val
+weight_fake: 1.0
+weight_real: 1.0
+with_landmark: false
+with_mask: false
+workers: 10
+
+2026-11-13 15:18:54,256 - INFO - HTTP Request: GET https://huggingface.co/api/models/openai/clip-vit-large-patch14/revision/main "HTTP/1.1 200 OK"
+2026-11-13 15:19:15,474 - INFO - Effort ready: mode=effort trainable=198,754 / 303,378,530 (0.0655%) breakdown={'svd_residual': 196704, 'replaced_linears': 96, 'backbone_total_trainable': 196704}
+2026-11-13 15:19:15,903 - INFO - ===> Epoch[0] start!
+2026-11-13 15:19:15,913 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:19:17,429 - INFO - Iter: 0    training-loss, overall: 1.1123510599136353    training-loss, loss_ce: 1.1123510599136353    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.49553143978118896    training-loss, fake_loss: 1.2004680633544922    
+2026-11-13 15:19:17,433 - INFO - Iter: 0    training-metric, acc: 0.25    training-metric, auc: 0.4642857142857143    training-metric, eer: 0.5    training-metric, ap: 0.9023329844758416    
+2026-11-13 15:19:54,890 - INFO - Iter: 300    training-loss, overall: 0.4746454954147339    training-loss, loss_ce: 0.4746454954147339    training-loss, loss_aux: 0.0    training-loss, real_loss: 1.3666186332702637    training-loss, fake_loss: 0.2433546781539917    
+2026-11-13 15:19:54,891 - INFO - Iter: 300    training-metric, acc: 0.77125    training-metric, auc: 0.6974937609471509    training-metric, eer: 0.3295856873822975    training-metric, ap: 0.9096723928977782    
+2026-11-13 15:20:32,645 - INFO - Iter: 600    training-loss, overall: 0.405025839805603    training-loss, loss_ce: 0.405025839805603    training-loss, loss_aux: 0.0    training-loss, real_loss: 1.1764887571334839    training-loss, fake_loss: 0.20431073009967804    
+2026-11-13 15:20:32,646 - INFO - Iter: 600    training-metric, acc: 0.7958333333333333    training-metric, auc: 0.795364835258903    training-metric, eer: 0.23054479418886212    training-metric, ap: 0.9452432142556669    
+2026-11-13 15:21:10,150 - INFO - Iter: 900    training-loss, overall: 0.37879419326782227    training-loss, loss_ce: 0.37879419326782227    training-loss, loss_aux: 0.0    training-loss, real_loss: 1.0826255083084106    training-loss, fake_loss: 0.19440190494060516    
+2026-11-13 15:21:10,150 - INFO - Iter: 900    training-metric, acc: 0.80625    training-metric, auc: 0.8292353050729337    training-metric, eer: 0.1864506627393226    training-metric, ap: 0.9565666734984183    
+2026-11-13 15:21:47,212 - INFO - Iter: 1200    training-loss, overall: 0.3606311082839966    training-loss, loss_ce: 0.3606311082839966    training-loss, loss_aux: 0.0    training-loss, real_loss: 1.0395267009735107    training-loss, fake_loss: 0.18761910498142242    
+2026-11-13 15:21:47,212 - INFO - Iter: 1200    training-metric, acc: 0.8120833333333334    training-metric, auc: 0.8471783501338582    training-metric, eer: 0.17985472154963683    training-metric, ap: 0.9607425067005223    
+2026-11-13 15:22:24,950 - INFO - Iter: 1500    training-loss, overall: 0.36158496141433716    training-loss, loss_ce: 0.36158496141433716    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.9826886057853699    training-loss, fake_loss: 0.1931544542312622    
+2026-11-13 15:22:24,950 - INFO - Iter: 1500    training-metric, acc: 0.8147916666666667    training-metric, auc: 0.8563504345710976    training-metric, eer: 0.15706187236799488    training-metric, ap: 0.9616077170352448    
+2026-11-13 15:23:02,158 - INFO - ===> Test start!
+2026-11-13 15:23:02,169 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:23:40,381 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 0+1797
+2026-11-13 15:23:40,382 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:23:40,388 - INFO - dataset: FaceForensics++    step: 1797    testing-loss, overall: 0.2788509130477905    testing-loss, loss_ce: 0.2788509130477905    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.8653445839881897    testing-loss, fake_loss: 0.13179180026054382    
+2026-11-13 15:23:40,392 - INFO - dataset: FaceForensics++    step: 1797    testing-metric, acc: 0.8627538695535475    testing-metric, auc: 0.9213820249305154    testing-metric, eer: 0.15188742461469734    testing-metric, ap: 0.9800314474711015    testing-metric, video_auc: 0.9415433673469387    testing-metric, acc_real:0.5459012731740005; acc_fake:0.9421043799295183
+2026-11-13 15:23:40,392 - INFO - ===> Test Done!
+2026-11-13 15:23:40,444 - INFO - Epoch stats: {'epoch': 0, 'train_seconds': 205.27186315498693, 'train_images': 28768, 'train_images_per_second': 140.14585125229377, 'peak_gpu_memory_gb': 5.394534111022949}
+2026-11-13 15:23:40,730 - INFO - ===> Epoch[0] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9213820249305154 | 
+=============================================================================================
+2026-11-13 15:23:40,753 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch00.pth
+2026-11-13 15:23:40,754 - INFO - ===> Epoch[1] start!
+2026-11-13 15:23:40,766 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:23:41,629 - INFO - Iter: 1798    training-loss, overall: 0.3123948276042938    training-loss, loss_ce: 0.3123948276042938    training-loss, loss_aux: 0.0    training-loss, real_loss: 1.2719168663024902    training-loss, fake_loss: 0.17532023787498474    
+2026-11-13 15:23:41,629 - INFO - Iter: 1798    training-metric, acc: 0.8125    training-metric, auc: 0.8214285714285714    training-metric, eer: 0.5    training-metric, ap: 0.9745225013082156    
+2026-11-13 15:24:20,756 - INFO - Iter: 2098    training-loss, overall: 0.3292835056781769    training-loss, loss_ce: 0.3292835056781769    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.8882133364677429    training-loss, fake_loss: 0.17395751178264618    
+2026-11-13 15:24:20,757 - INFO - Iter: 2098    training-metric, acc: 0.8408333333333333    training-metric, auc: 0.8918116370446871    training-metric, eer: 0.13027441485068605    training-metric, ap: 0.9709836824862983    
+2026-11-13 15:24:57,816 - INFO - Iter: 2398    training-loss, overall: 0.30421724915504456    training-loss, loss_ce: 0.30421724915504456    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.8509484529495239    training-loss, fake_loss: 0.16314981877803802    
+2026-11-13 15:24:57,816 - INFO - Iter: 2398    training-metric, acc: 0.8572916666666667    training-metric, auc: 0.9013376857667517    training-metric, eer: 0.11615587411435159    training-metric, ap: 0.9748638039226927    
+2026-11-13 15:25:34,814 - INFO - ===> Test start!
+2026-11-13 15:25:34,825 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:26:12,845 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 1+898
+2026-11-13 15:26:12,846 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:26:12,849 - INFO - dataset: FaceForensics++    step: 2696    testing-loss, overall: 0.25208771228790283    testing-loss, loss_ce: 0.25208771228790283    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.479382187128067    testing-loss, fake_loss: 0.1950843781232834    
+2026-11-13 15:26:12,850 - INFO - dataset: FaceForensics++    step: 2696    testing-metric, acc: 0.8883868658853001    testing-metric, auc: 0.9412031341809065    testing-metric, eer: 0.12106321197230288    testing-metric, ap: 0.985144701083867    testing-metric, video_auc: 0.9616326530612245    testing-metric, acc_real:0.8222023676569131; acc_fake:0.9049616826089388
+2026-11-13 15:26:12,850 - INFO - ===> Test Done!
+2026-11-13 15:26:13,118 - INFO - Iter: 2698    training-loss, overall: 0.28576067090034485    training-loss, loss_ce: 0.28576067090034485    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.7658385634422302    training-loss, fake_loss: 0.154751718044281    
+2026-11-13 15:26:13,119 - INFO - Iter: 2698    training-metric, acc: 0.8677083333333333    training-metric, auc: 0.9184264211340406    training-metric, eer: 0.10526744944553157    training-metric, ap: 0.9775693199549423    
+2026-11-13 15:26:50,251 - INFO - Iter: 2998    training-loss, overall: 0.28982555866241455    training-loss, loss_ce: 0.28982555866241455    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.8159310817718506    training-loss, fake_loss: 0.16008634865283966    
+2026-11-13 15:26:50,252 - INFO - Iter: 2998    training-metric, acc: 0.8627083333333333    training-metric, auc: 0.9066901671174629    training-metric, eer: 0.10783527696792995    training-metric, ap: 0.976924933617322    
+2026-11-13 15:27:27,409 - INFO - Iter: 3298    training-loss, overall: 0.28119760751724243    training-loss, loss_ce: 0.28119760751724243    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.8000782132148743    training-loss, fake_loss: 0.14883844554424286    
+2026-11-13 15:27:27,409 - INFO - Iter: 3298    training-metric, acc: 0.870625    training-metric, auc: 0.9164261104265459    training-metric, eer: 0.11325701012112155    training-metric, ap: 0.9793382657138456    
+2026-11-13 15:28:04,097 - INFO - ===> Test start!
+2026-11-13 15:28:04,106 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:28:42,364 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 1+1797
+2026-11-13 15:28:42,365 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:28:42,367 - INFO - dataset: FaceForensics++    step: 3595    testing-loss, overall: 0.22889050841331482    testing-loss, loss_ce: 0.22889050841331482    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.35319438576698303    testing-loss, fake_loss: 0.19782967865467072    
+2026-11-13 15:28:42,368 - INFO - dataset: FaceForensics++    step: 3595    testing-metric, acc: 0.9041782231367987    testing-metric, auc: 0.9563015290410063    testing-metric, eer: 0.1029707393343757    testing-metric, ap: 0.9889542739503484    testing-metric, video_auc: 0.9763775510204081    testing-metric, acc_real:0.8717891445164172; acc_fake:0.9122895340381496
+2026-11-13 15:28:42,369 - INFO - ===> Test Done!
+2026-11-13 15:28:42,512 - INFO - Epoch stats: {'epoch': 1, 'train_seconds': 204.31064159504604, 'train_images': 28768, 'train_images_per_second': 140.8051963197278, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:28:42,812 - INFO - ===> Epoch[1] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9563015290410063 | 
+=============================================================================================
+2026-11-13 15:28:42,836 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch01.pth
+2026-11-13 15:28:42,836 - INFO - ===> Epoch[2] start!
+2026-11-13 15:28:42,848 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:28:43,675 - INFO - Iter: 3596    training-loss, overall: 0.295999675989151    training-loss, loss_ce: 0.295999675989151    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.18551312386989594    training-loss, fake_loss: 0.31178346276283264    
+2026-11-13 15:28:43,675 - INFO - Iter: 3596    training-metric, acc: 0.8125    training-metric, auc: 1.0    training-metric, eer: 0.0    training-metric, ap: 1.0    
+2026-11-13 15:29:22,637 - INFO - Iter: 3896    training-loss, overall: 0.27318552136421204    training-loss, loss_ce: 0.27318552136421204    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.7926493883132935    training-loss, fake_loss: 0.1450227051973343    
+2026-11-13 15:29:22,637 - INFO - Iter: 3896    training-metric, acc: 0.8779166666666667    training-metric, auc: 0.9197785113601441    training-metric, eer: 0.1016763848396501    training-metric, ap: 0.9798617102951175    
+2026-11-13 15:29:59,820 - INFO - Iter: 4196    training-loss, overall: 0.24852623045444489    training-loss, loss_ce: 0.24852623045444489    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6808552742004395    training-loss, fake_loss: 0.1373736411333084    
+2026-11-13 15:29:59,820 - INFO - Iter: 4196    training-metric, acc: 0.8879166666666667    training-metric, auc: 0.9360552416866413    training-metric, eer: 0.08928977734438479    training-metric, ap: 0.9832650953225521    
+2026-11-13 15:30:36,858 - INFO - ===> Test start!
+2026-11-13 15:30:36,869 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:31:14,896 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 2+898
+2026-11-13 15:31:14,897 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:31:14,900 - INFO - dataset: FaceForensics++    step: 4494    testing-loss, overall: 0.19756905734539032    testing-loss, loss_ce: 0.19756905734539032    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.6387569308280945    testing-loss, fake_loss: 0.08734723925590515    
+2026-11-13 15:31:14,901 - INFO - dataset: FaceForensics++    step: 4494    testing-metric, acc: 0.9203721928961259    testing-metric, auc: 0.9640807686315628    testing-metric, eer: 0.08956890775072593    testing-metric, ap: 0.9907382904809934    testing-metric, video_auc: 0.9822448979591836    testing-metric, acc_real:0.7516193879830243; acc_fake:0.9626335514907423
+2026-11-13 15:31:14,901 - INFO - ===> Test Done!
+2026-11-13 15:31:15,147 - INFO - Iter: 4496    training-loss, overall: 0.24954071640968323    training-loss, loss_ce: 0.24954071640968323    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6951406598091125    training-loss, fake_loss: 0.1407644897699356    
+2026-11-13 15:31:15,148 - INFO - Iter: 4496    training-metric, acc: 0.8854166666666666    training-metric, auc: 0.9358250510355102    training-metric, eer: 0.0839515171147824    training-metric, ap: 0.984244556376333    
+2026-11-13 15:31:51,820 - INFO - Iter: 4796    training-loss, overall: 0.2493782639503479    training-loss, loss_ce: 0.2493782639503479    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.672580361366272    training-loss, fake_loss: 0.13583886623382568    
+2026-11-13 15:31:51,820 - INFO - Iter: 4796    training-metric, acc: 0.8872916666666667    training-metric, auc: 0.9416634209044922    training-metric, eer: 0.0851271460965338    training-metric, ap: 0.9838285981253836    
+2026-11-13 15:32:29,078 - INFO - Iter: 5096    training-loss, overall: 0.23839108645915985    training-loss, loss_ce: 0.23839108645915985    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6545991897583008    training-loss, fake_loss: 0.13120585680007935    
+2026-11-13 15:32:29,079 - INFO - Iter: 5096    training-metric, acc: 0.8910416666666666    training-metric, auc: 0.9464026805101293    training-metric, eer: 0.06581050228310503    training-metric, ap: 0.9867678035180626    
+2026-11-13 15:33:05,967 - INFO - ===> Test start!
+2026-11-13 15:33:05,975 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:33:44,251 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 2+1797
+2026-11-13 15:33:44,251 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:33:44,254 - INFO - dataset: FaceForensics++    step: 5393    testing-loss, overall: 0.19932477176189423    testing-loss, loss_ce: 0.19932477176189423    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.34827011823654175    testing-loss, fake_loss: 0.16240011155605316    
+2026-11-13 15:33:44,255 - INFO - dataset: FaceForensics++    step: 5393    testing-metric, acc: 0.9232799498971102    testing-metric, auc: 0.9649127512176529    testing-metric, eer: 0.08711190529372348    testing-metric, ap: 0.9911422984160516    testing-metric, video_auc: 0.9825382653061225    testing-metric, acc_real:0.8742461469734197; acc_fake:0.9355596576606813
+2026-11-13 15:33:44,255 - INFO - ===> Test Done!
+2026-11-13 15:33:44,397 - INFO - Epoch stats: {'epoch': 2, 'train_seconds': 204.12489111698414, 'train_images': 28768, 'train_images_per_second': 140.93332685974605, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:33:44,701 - INFO - ===> Epoch[2] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9649127512176529 | 
+=============================================================================================
+2026-11-13 15:33:44,724 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch02.pth
+2026-11-13 15:33:44,725 - INFO - ===> Epoch[3] start!
+2026-11-13 15:33:44,737 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:33:45,603 - INFO - Iter: 5394    training-loss, overall: 0.1301593780517578    training-loss, loss_ce: 0.1301593780517578    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4094696044921875    training-loss, fake_loss: 0.0902579203248024    
+2026-11-13 15:33:45,604 - INFO - Iter: 5394    training-metric, acc: 1.0    training-metric, auc: 1.0    training-metric, eer: 0.0    training-metric, ap: 1.0    
+2026-11-13 15:34:25,141 - INFO - Iter: 5694    training-loss, overall: 0.2236255407333374    training-loss, loss_ce: 0.2236255407333374    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6351039409637451    training-loss, fake_loss: 0.1290094554424286    
+2026-11-13 15:34:25,141 - INFO - Iter: 5694    training-metric, acc: 0.8991666666666667    training-metric, auc: 0.947923451313282    training-metric, eer: 0.05685633575464083    training-metric, ap: 0.9874889403625364    
+2026-11-13 15:35:01,880 - INFO - Iter: 5994    training-loss, overall: 0.23725296556949615    training-loss, loss_ce: 0.23725296556949615    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6671243906021118    training-loss, fake_loss: 0.1296624094247818    
+2026-11-13 15:35:01,881 - INFO - Iter: 5994    training-metric, acc: 0.8947916666666667    training-metric, auc: 0.9423930297072772    training-metric, eer: 0.07231102231102231    training-metric, ap: 0.9865430746217256    
+2026-11-13 15:35:38,698 - INFO - ===> Test start!
+2026-11-13 15:35:38,709 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:36:16,625 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 3+898
+2026-11-13 15:36:16,626 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:36:16,629 - INFO - dataset: FaceForensics++    step: 6292    testing-loss, overall: 0.18805363774299622    testing-loss, loss_ce: 0.18805363774299622    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.5748769044876099    testing-loss, fake_loss: 0.09172827750444412    
+2026-11-13 15:36:16,630 - INFO - dataset: FaceForensics++    step: 6292    testing-metric, acc: 0.9262324416211863    testing-metric, auc: 0.9666689006800984    testing-metric, eer: 0.08376144739781104    testing-metric, ap: 0.9914680334180603    testing-metric, video_auc: 0.9840688775510203    testing-metric, acc_real:0.7806566897475988; acc_fake:0.9626894892879119
+2026-11-13 15:36:16,630 - INFO - ===> Test Done!
+2026-11-13 15:36:16,884 - INFO - Iter: 6294    training-loss, overall: 0.23151127994060516    training-loss, loss_ce: 0.23151127994060516    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6066495180130005    training-loss, fake_loss: 0.12754026055335999    
+2026-11-13 15:36:16,884 - INFO - Iter: 6294    training-metric, acc: 0.8958333333333334    training-metric, auc: 0.952538882685942    training-metric, eer: 0.06045751633986924    training-metric, ap: 0.9874810955320843    
+2026-11-13 15:36:54,195 - INFO - Iter: 6594    training-loss, overall: 0.22672583162784576    training-loss, loss_ce: 0.22672583162784576    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6010944843292236    training-loss, fake_loss: 0.1282409429550171    
+2026-11-13 15:36:54,196 - INFO - Iter: 6594    training-metric, acc: 0.8966666666666666    training-metric, auc: 0.9519625576443761    training-metric, eer: 0.07176989676989674    training-metric, ap: 0.9877368207393712    
+2026-11-13 15:37:31,272 - INFO - Iter: 6894    training-loss, overall: 0.22505295276641846    training-loss, loss_ce: 0.22505295276641846    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5868896245956421    training-loss, fake_loss: 0.12516649067401886    
+2026-11-13 15:37:31,272 - INFO - Iter: 6894    training-metric, acc: 0.8977083333333333    training-metric, auc: 0.9550264989248043    training-metric, eer: 0.062413236481033064    training-metric, ap: 0.9883118465439854    
+2026-11-13 15:38:08,015 - INFO - ===> Test start!
+2026-11-13 15:38:08,023 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:38:46,018 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 3+1797
+2026-11-13 15:38:46,019 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:38:46,021 - INFO - dataset: FaceForensics++    step: 7191    testing-loss, overall: 0.19550567865371704    testing-loss, loss_ce: 0.19550567865371704    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.6420438289642334    testing-loss, fake_loss: 0.0842251405119896    
+2026-11-13 15:38:46,022 - INFO - dataset: FaceForensics++    step: 7191    testing-metric, acc: 0.9269481971906594    testing-metric, auc: 0.9682362335263218    testing-metric, eer: 0.08152780880053608    testing-metric, ap: 0.9920050328130103    testing-metric, video_auc: 0.984719387755102    testing-metric, acc_real:0.7636810364083091; acc_fake:0.9678357666275103
+2026-11-13 15:38:46,022 - INFO - ===> Test Done!
+2026-11-13 15:38:46,151 - INFO - Epoch stats: {'epoch': 3, 'train_seconds': 204.1600424069802, 'train_images': 28768, 'train_images_per_second': 140.90906164024398, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:38:46,450 - INFO - ===> Epoch[3] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9682362335263218 | 
+=============================================================================================
+2026-11-13 15:38:46,473 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch03.pth
+2026-11-13 15:38:46,473 - INFO - ===> Epoch[4] start!
+2026-11-13 15:38:46,486 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:38:47,358 - INFO - Iter: 7192    training-loss, overall: 0.05958200618624687    training-loss, loss_ce: 0.05958200618624687    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.43945226073265076    training-loss, fake_loss: 0.005314826965332031    
+2026-11-13 15:38:47,359 - INFO - Iter: 7192    training-metric, acc: 0.9375    training-metric, auc: 1.0    training-metric, eer: 0.0    training-metric, ap: 1.0    
+2026-11-13 15:39:25,878 - INFO - Iter: 7492    training-loss, overall: 0.21259953081607819    training-loss, loss_ce: 0.21259953081607819    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5901749134063721    training-loss, fake_loss: 0.11490540951490402    
+2026-11-13 15:39:25,878 - INFO - Iter: 7492    training-metric, acc: 0.9064583333333334    training-metric, auc: 0.958029337024182    training-metric, eer: 0.05161593847160858    training-metric, ap: 0.9892409978804486    
+2026-11-13 15:40:03,190 - INFO - Iter: 7792    training-loss, overall: 0.21241457760334015    training-loss, loss_ce: 0.21241457760334015    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5714378356933594    training-loss, fake_loss: 0.11764984577894211    
+2026-11-13 15:40:03,190 - INFO - Iter: 7792    training-metric, acc: 0.9047916666666667    training-metric, auc: 0.9568546726212235    training-metric, eer: 0.05679165975333222    training-metric, ap: 0.9889435131153391    
+2026-11-13 15:40:40,830 - INFO - ===> Test start!
+2026-11-13 15:40:40,841 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:41:18,748 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 4+898
+2026-11-13 15:41:18,749 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:41:18,752 - INFO - dataset: FaceForensics++    step: 8090    testing-loss, overall: 0.18161043524742126    testing-loss, loss_ce: 0.18161043524742126    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.4715246558189392    testing-loss, fake_loss: 0.10956093668937683    
+2026-11-13 15:41:18,753 - INFO - dataset: FaceForensics++    step: 8090    testing-metric, acc: 0.9309743222689452    testing-metric, auc: 0.9693666530689216    testing-metric, eer: 0.08085771722135358    testing-metric, ap: 0.9923345716546756    testing-metric, video_auc: 0.9854209183673469    testing-metric, acc_real:0.8230958230958231; acc_fake:0.9579907143256698
+2026-11-13 15:41:18,753 - INFO - ===> Test Done!
+2026-11-13 15:41:19,009 - INFO - Iter: 8092    training-loss, overall: 0.21351605653762817    training-loss, loss_ce: 0.21351605653762817    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5403831601142883    training-loss, fake_loss: 0.12459142506122589    
+2026-11-13 15:41:19,009 - INFO - Iter: 8092    training-metric, acc: 0.905    training-metric, auc: 0.9577213647179522    training-metric, eer: 0.0582886396879571    training-metric, ap: 0.9881634592884374    
+2026-11-13 15:41:56,174 - INFO - Iter: 8392    training-loss, overall: 0.21614056825637817    training-loss, loss_ce: 0.21614056825637817    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6007912158966064    training-loss, fake_loss: 0.1177780032157898    
+2026-11-13 15:41:56,174 - INFO - Iter: 8392    training-metric, acc: 0.9060416666666666    training-metric, auc: 0.9543156955205925    training-metric, eer: 0.049635902470954014    training-metric, ap: 0.9896669174707754    
+2026-11-13 15:42:33,343 - INFO - Iter: 8692    training-loss, overall: 0.22574970126152039    training-loss, loss_ce: 0.22574970126152039    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6085445284843445    training-loss, fake_loss: 0.12485471367835999    
+2026-11-13 15:42:33,343 - INFO - Iter: 8692    training-metric, acc: 0.899375    training-metric, auc: 0.9525894848420446    training-metric, eer: 0.059036242483341446    training-metric, ap: 0.9881044516355901    
+2026-11-13 15:43:10,046 - INFO - ===> Test start!
+2026-11-13 15:43:10,054 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:43:47,995 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 4+1797
+2026-11-13 15:43:47,996 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:43:47,998 - INFO - dataset: FaceForensics++    step: 8989    testing-loss, overall: 0.18475517630577087    testing-loss, loss_ce: 0.18475517630577087    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.5217323899269104    testing-loss, fake_loss: 0.10095742344856262    
+2026-11-13 15:43:48,000 - INFO - dataset: FaceForensics++    step: 8989    testing-metric, acc: 0.9332557931466404    testing-metric, auc: 0.9697705559503603    testing-metric, eer: 0.07907080634353361    testing-metric, ap: 0.9923893462426477    testing-metric, video_auc: 0.985829081632653    testing-metric, acc_real:0.8108108108108109; acc_fake:0.9639201208256419
+2026-11-13 15:43:48,000 - INFO - ===> Test Done!
+2026-11-13 15:43:48,141 - INFO - Epoch stats: {'epoch': 4, 'train_seconds': 204.41569469504793, 'train_images': 28768, 'train_images_per_second': 140.7328338605153, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:43:48,436 - INFO - ===> Epoch[4] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9697705559503603 | 
+=============================================================================================
+2026-11-13 15:43:48,459 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch04.pth
+2026-11-13 15:43:48,460 - INFO - ===> Epoch[5] start!
+2026-11-13 15:43:48,472 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:43:49,305 - INFO - Iter: 8990    training-loss, overall: 0.14912909269332886    training-loss, loss_ce: 0.14912909269332886    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.48604148626327515    training-loss, fake_loss: 0.03682496398687363    
+2026-11-13 15:43:49,306 - INFO - Iter: 8990    training-metric, acc: 0.875    training-metric, auc: 1.0    training-metric, eer: 0.0    training-metric, ap: 1.0    
+2026-11-13 15:44:28,380 - INFO - Iter: 9290    training-loss, overall: 0.20181626081466675    training-loss, loss_ce: 0.20181626081466675    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.535664439201355    training-loss, fake_loss: 0.1122455969452858    
+2026-11-13 15:44:28,380 - INFO - Iter: 9290    training-metric, acc: 0.9122916666666666    training-metric, auc: 0.9616726113924388    training-metric, eer: 0.048214285714285696    training-metric, ap: 0.9906204165413315    
+2026-11-13 15:45:05,417 - INFO - Iter: 9590    training-loss, overall: 0.20465528964996338    training-loss, loss_ce: 0.20465528964996338    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5582146644592285    training-loss, fake_loss: 0.11218748986721039    
+2026-11-13 15:45:05,417 - INFO - Iter: 9590    training-metric, acc: 0.9122916666666666    training-metric, auc: 0.9610154127170394    training-metric, eer: 0.05173271363339857    training-metric, ap: 0.9900853129113442    
+2026-11-13 15:45:42,299 - INFO - ===> Test start!
+2026-11-13 15:45:42,310 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:46:20,191 - INFO - dataset: FaceForensics++    step: 9888    testing-loss, overall: 0.18807391822338104    testing-loss, loss_ce: 0.18807391822338104    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.5027222633361816    testing-loss, fake_loss: 0.10995126515626907    
+2026-11-13 15:46:20,192 - INFO - dataset: FaceForensics++    step: 9888    testing-metric, acc: 0.9323610986847991    testing-metric, auc: 0.9692803099491226    testing-metric, eer: 0.08152780880053608    testing-metric, ap: 0.9923202854554419    testing-metric, video_auc: 0.9851147959183675    testing-metric, acc_real:0.8206388206388207; acc_fake:0.9603401018067909
+2026-11-13 15:46:20,193 - INFO - ===> Test Done!
+2026-11-13 15:46:20,462 - INFO - Iter: 9890    training-loss, overall: 0.19888505339622498    training-loss, loss_ce: 0.19888505339622498    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5169174075126648    training-loss, fake_loss: 0.11522040516138077    
+2026-11-13 15:46:20,462 - INFO - Iter: 9890    training-metric, acc: 0.9114583333333334    training-metric, auc: 0.9633022772246906    training-metric, eer: 0.05558429118773945    training-metric, ap: 0.9901790054840237    
+2026-11-13 15:46:57,646 - INFO - Iter: 10190    training-loss, overall: 0.19286076724529266    training-loss, loss_ce: 0.19286076724529266    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5034326314926147    training-loss, fake_loss: 0.11262442171573639    
+2026-11-13 15:46:57,646 - INFO - Iter: 10190    training-metric, acc: 0.9129166666666667    training-metric, auc: 0.9649728220789867    training-metric, eer: 0.03956294846705805    training-metric, ap: 0.9911289703175609    
+2026-11-13 15:47:34,483 - INFO - Iter: 10490    training-loss, overall: 0.20110675692558289    training-loss, loss_ce: 0.20110675692558289    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5425088405609131    training-loss, fake_loss: 0.11268258839845657    
+2026-11-13 15:47:34,483 - INFO - Iter: 10490    training-metric, acc: 0.9139583333333333    training-metric, auc: 0.961801761164006    training-metric, eer: 0.048995788791707164    training-metric, ap: 0.9911579833397414    
+2026-11-13 15:48:10,892 - INFO - ===> Test start!
+2026-11-13 15:48:10,900 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:48:48,980 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 5+1797
+2026-11-13 15:48:48,981 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:48:48,984 - INFO - dataset: FaceForensics++    step: 10787    testing-loss, overall: 0.18436777591705322    testing-loss, loss_ce: 0.18436777591705322    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.5218368172645569    testing-loss, fake_loss: 0.100614033639431    
+2026-11-13 15:48:48,985 - INFO - dataset: FaceForensics++    step: 10787    testing-metric, acc: 0.9336136709313769    testing-metric, auc: 0.9711105954221791    testing-metric, eer: 0.07750725932544114    testing-metric, ap: 0.9927738847127355    testing-metric, video_auc: 0.9866836734693878    testing-metric, acc_real:0.8088005360732633; acc_fake:0.9648710633775242
+2026-11-13 15:48:48,985 - INFO - ===> Test Done!
+2026-11-13 15:48:49,111 - INFO - Epoch stats: {'epoch': 5, 'train_seconds': 203.49379181799304, 'train_images': 28768, 'train_images_per_second': 141.3704061582891, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:48:49,408 - INFO - ===> Epoch[5] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9711105954221791 | 
+=============================================================================================
+2026-11-13 15:48:49,433 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch05.pth
+2026-11-13 15:48:49,433 - INFO - ===> Epoch[6] start!
+2026-11-13 15:48:49,445 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:48:50,309 - INFO - Iter: 10788    training-loss, overall: 0.0770324319601059    training-loss, loss_ce: 0.0770324319601059    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.19665300846099854    training-loss, fake_loss: 0.03715891018509865    
+2026-11-13 15:48:50,310 - INFO - Iter: 10788    training-metric, acc: 1.0    training-metric, auc: 1.0    training-metric, eer: 0.0    training-metric, ap: 1.0    
+2026-11-13 15:49:29,274 - INFO - Iter: 11088    training-loss, overall: 0.17773793637752533    training-loss, loss_ce: 0.17773793637752533    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4888538718223572    training-loss, fake_loss: 0.10013185441493988    
+2026-11-13 15:49:29,275 - INFO - Iter: 11088    training-metric, acc: 0.9189583333333333    training-metric, auc: 0.9695814769521666    training-metric, eer: 0.03323481116584565    training-metric, ap: 0.9926543958360823    
+2026-11-13 15:50:06,017 - INFO - Iter: 11388    training-loss, overall: 0.1889486163854599    training-loss, loss_ce: 0.1889486163854599    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.503282368183136    training-loss, fake_loss: 0.10842517763376236    
+2026-11-13 15:50:06,018 - INFO - Iter: 11388    training-metric, acc: 0.9202083333333333    training-metric, auc: 0.9670051745306848    training-metric, eer: 0.04578879170715904    training-metric, ap: 0.9915805076526442    
+2026-11-13 15:50:42,631 - INFO - ===> Test start!
+2026-11-13 15:50:42,643 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:51:20,446 - INFO - dataset: FaceForensics++    step: 11686    testing-loss, overall: 0.1840730458498001    testing-loss, loss_ce: 0.1840730458498001    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.44209033250808716    testing-loss, fake_loss: 0.11984807252883911    
+2026-11-13 15:51:20,448 - INFO - dataset: FaceForensics++    step: 11686    testing-metric, acc: 0.9347767737317706    testing-metric, auc: 0.9710119264956104    testing-metric, eer: 0.07862407862407862    testing-metric, ap: 0.9927528397047348    testing-metric, video_auc: 0.9867602040816327    testing-metric, acc_real:0.8472191199463927; acc_fake:0.9567041449907703
+2026-11-13 15:51:20,448 - INFO - ===> Test Done!
+2026-11-13 15:51:20,707 - INFO - Iter: 11688    training-loss, overall: 0.18429513275623322    training-loss, loss_ce: 0.18429513275623322    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.500896692276001    training-loss, fake_loss: 0.10431419312953949    
+2026-11-13 15:51:20,708 - INFO - Iter: 11688    training-metric, acc: 0.9177083333333333    training-metric, auc: 0.9719616439971743    training-metric, eer: 0.03050799086757991    training-metric, ap: 0.9932607357665741    
+2026-11-13 15:51:58,139 - INFO - Iter: 11988    training-loss, overall: 0.18774105608463287    training-loss, loss_ce: 0.18774105608463287    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.46299612522125244    training-loss, fake_loss: 0.11071251332759857    
+2026-11-13 15:51:58,139 - INFO - Iter: 11988    training-metric, acc: 0.9189583333333333    training-metric, auc: 0.9696881449529752    training-metric, eer: 0.03764191552327145    training-metric, ap: 0.9921283741129066    
+2026-11-13 15:52:35,223 - INFO - Iter: 12288    training-loss, overall: 0.21295547485351562    training-loss, loss_ce: 0.21295547485351562    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5988355875015259    training-loss, fake_loss: 0.11976013332605362    
+2026-11-13 15:52:35,223 - INFO - Iter: 12288    training-metric, acc: 0.9089583333333333    training-metric, auc: 0.9549607284838451    training-metric, eer: 0.04773320287018917    training-metric, ap: 0.9885824155400025    
+2026-11-13 15:53:11,712 - INFO - ===> Test start!
+2026-11-13 15:53:11,720 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:53:49,689 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 6+1797
+2026-11-13 15:53:49,690 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 15:53:49,692 - INFO - dataset: FaceForensics++    step: 12585    testing-loss, overall: 0.1814180165529251    testing-loss, loss_ce: 0.1814180165529251    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.4879557490348816    testing-loss, fake_loss: 0.10516685247421265    
+2026-11-13 15:53:49,693 - INFO - dataset: FaceForensics++    step: 12585    testing-metric, acc: 0.9363872237630849    testing-metric, auc: 0.9723629111339068    testing-metric, eer: 0.07728389546571365    testing-metric, ap: 0.9931523953437498    testing-metric, video_auc: 0.9875510204081633    testing-metric, acc_real:0.829350011168193; acc_fake:0.9631929294624377
+2026-11-13 15:53:49,693 - INFO - ===> Test Done!
+2026-11-13 15:53:49,818 - INFO - Epoch stats: {'epoch': 6, 'train_seconds': 203.40167605602255, 'train_images': 28768, 'train_images_per_second': 141.43442943939402, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:53:50,112 - INFO - ===> Epoch[6] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9723629111339068 | 
+=============================================================================================
+2026-11-13 15:53:50,135 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch06.pth
+2026-11-13 15:53:50,136 - INFO - ===> Epoch[7] start!
+2026-11-13 15:53:50,147 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:53:51,003 - INFO - Iter: 12586    training-loss, overall: 0.1635681688785553    training-loss, loss_ce: 0.1635681688785553    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.6844659447669983    training-loss, fake_loss: 0.04336099326610565    
+2026-11-13 15:53:51,004 - INFO - Iter: 12586    training-metric, acc: 0.9375    training-metric, auc: 0.9487179487179488    training-metric, eer: 0.0    training-metric, ap: 0.9885883347421809    
+2026-11-13 15:54:29,599 - INFO - Iter: 12886    training-loss, overall: 0.17330697178840637    training-loss, loss_ce: 0.17330697178840637    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4228193759918213    training-loss, fake_loss: 0.10170570760965347    
+2026-11-13 15:54:29,599 - INFO - Iter: 12886    training-metric, acc: 0.923125    training-metric, auc: 0.9761484711250067    training-metric, eer: 0.03009507557289127    training-metric, ap: 0.9935574116350593    
+2026-11-13 15:55:06,931 - INFO - Iter: 13186    training-loss, overall: 0.1863899827003479    training-loss, loss_ce: 0.1863899827003479    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.47643646597862244    training-loss, fake_loss: 0.10538145154714584    
+2026-11-13 15:55:06,931 - INFO - Iter: 13186    training-metric, acc: 0.9179166666666667    training-metric, auc: 0.9710468380690225    training-metric, eer: 0.041089712335446116    training-metric, ap: 0.9922121011831411    
+2026-11-13 15:55:43,861 - INFO - ===> Test start!
+2026-11-13 15:55:43,873 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:56:22,063 - INFO - dataset: FaceForensics++    step: 13484    testing-loss, overall: 0.20329393446445465    testing-loss, loss_ce: 0.20329393446445465    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.28386905789375305    testing-loss, fake_loss: 0.1837303340435028    
+2026-11-13 15:56:22,064 - INFO - dataset: FaceForensics++    step: 13484    testing-metric, acc: 0.9284244430526976    testing-metric, auc: 0.9711536951388055    testing-metric, eer: 0.07951753406298862    testing-metric, ap: 0.99283326132189    testing-metric, video_auc: 0.987155612244898    testing-metric, acc_real:0.9010498101407193; acc_fake:0.9352799686748335
+2026-11-13 15:56:22,065 - INFO - ===> Test Done!
+2026-11-13 15:56:22,340 - INFO - Iter: 13486    training-loss, overall: 0.17944933474063873    training-loss, loss_ce: 0.17944933474063873    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5007964968681335    training-loss, fake_loss: 0.09927332401275635    
+2026-11-13 15:56:22,340 - INFO - Iter: 13486    training-metric, acc: 0.9277083333333334    training-metric, auc: 0.9695157752751609    training-metric, eer: 0.036039330407931086    training-metric, ap: 0.9925461181280174    
+2026-11-13 15:56:59,573 - INFO - Iter: 13786    training-loss, overall: 0.18126104772090912    training-loss, loss_ce: 0.18126104772090912    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4937264621257782    training-loss, fake_loss: 0.09996668994426727    
+2026-11-13 15:56:59,574 - INFO - Iter: 13786    training-metric, acc: 0.92125    training-metric, auc: 0.9697901202818159    training-metric, eer: 0.03593906093906093    training-metric, ap: 0.9929404147397766    
+2026-11-13 15:57:36,546 - INFO - Iter: 14086    training-loss, overall: 0.1881771981716156    training-loss, loss_ce: 0.1881771981716156    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.49899837374687195    training-loss, fake_loss: 0.10785770416259766    
+2026-11-13 15:57:36,546 - INFO - Iter: 14086    training-metric, acc: 0.91875    training-metric, auc: 0.9642520734201919    training-metric, eer: 0.04585199933631988    training-metric, ap: 0.9912379762229016    
+2026-11-13 15:58:12,861 - INFO - ===> Test start!
+2026-11-13 15:58:12,869 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 15:58:50,801 - INFO - dataset: FaceForensics++    step: 14383    testing-loss, overall: 0.18356305360794067    testing-loss, loss_ce: 0.18356305360794067    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.48943543434143066    testing-loss, fake_loss: 0.10773444175720215    
+2026-11-13 15:58:50,802 - INFO - dataset: FaceForensics++    step: 14383    testing-metric, acc: 0.9378187349020309    testing-metric, auc: 0.9721929299497226    testing-metric, eer: 0.07773062318516864    testing-metric, ap: 0.9930032601975629    testing-metric, video_auc: 0.9878061224489795    testing-metric, acc_real:0.829350011168193; acc_fake:0.9649829389718633
+2026-11-13 15:58:50,802 - INFO - ===> Test Done!
+2026-11-13 15:58:50,930 - INFO - Epoch stats: {'epoch': 7, 'train_seconds': 203.38318691202767, 'train_images': 28768, 'train_images_per_second': 141.44728695024062, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 15:58:51,225 - INFO - ===> Epoch[7] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9723629111339068 | 
+=============================================================================================
+2026-11-13 15:58:51,249 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch07.pth
+2026-11-13 15:58:51,249 - INFO - ===> Epoch[8] start!
+2026-11-13 15:58:51,262 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 15:58:52,135 - INFO - Iter: 14384    training-loss, overall: 0.2555338740348816    training-loss, loss_ce: 0.2555338740348816    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4610935151576996    training-loss, fake_loss: 0.13219811022281647    
+2026-11-13 15:58:52,136 - INFO - Iter: 14384    training-metric, acc: 0.875    training-metric, auc: 0.95    training-metric, eer: 0.0    training-metric, ap: 0.976923076923077    
+2026-11-13 15:59:31,224 - INFO - Iter: 14684    training-loss, overall: 0.17702136933803558    training-loss, loss_ce: 0.17702136933803558    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.49261048436164856    training-loss, fake_loss: 0.09948128461837769    
+2026-11-13 15:59:31,224 - INFO - Iter: 14684    training-metric, acc: 0.9245833333333333    training-metric, auc: 0.9716815302752803    training-metric, eer: 0.04395511583011584    training-metric, ap: 0.9928683490648234    
+2026-11-13 16:00:08,670 - INFO - Iter: 14984    training-loss, overall: 0.1867934912443161    training-loss, loss_ce: 0.1867934912443161    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5286275744438171    training-loss, fake_loss: 0.09880698472261429    
+2026-11-13 16:00:08,670 - INFO - Iter: 14984    training-metric, acc: 0.92375    training-metric, auc: 0.9692672609990315    training-metric, eer: 0.04185267857142858    training-metric, ap: 0.9915639177053276    
+2026-11-13 16:00:46,218 - INFO - ===> Test start!
+2026-11-13 16:00:46,230 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 16:01:24,205 - INFO - Checkpoint saved to logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth, current ckpt is 8+898
+2026-11-13 16:01:24,205 - INFO - Metrics saved to logs/val/effort_s1024/test/FaceForensics++/metric_dict_best.pickle
+2026-11-13 16:01:24,208 - INFO - dataset: FaceForensics++    step: 15282    testing-loss, overall: 0.18687774240970612    testing-loss, loss_ce: 0.18687774240970612    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.5928330421447754    testing-loss, fake_loss: 0.08583617210388184    
+2026-11-13 16:01:24,209 - INFO - dataset: FaceForensics++    step: 15282    testing-metric, acc: 0.9344188959470341    testing-metric, auc: 0.9739538960350872    testing-metric, eer: 0.07549698458789368    testing-metric, ap: 0.9934835194829423    testing-metric, video_auc: 0.9877678571428571    testing-metric, acc_real:0.7822202367656913; acc_fake:0.9725345415897522
+2026-11-13 16:01:24,209 - INFO - ===> Test Done!
+2026-11-13 16:01:24,472 - INFO - Iter: 15284    training-loss, overall: 0.16887642443180084    training-loss, loss_ce: 0.16887642443180084    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.44331374764442444    training-loss, fake_loss: 0.0934981182217598    
+2026-11-13 16:01:24,472 - INFO - Iter: 15284    training-metric, acc: 0.9264583333333334    training-metric, auc: 0.9734811508900054    training-metric, eer: 0.03329613095238096    training-metric, ap: 0.9928088795838048    
+2026-11-13 16:02:01,907 - INFO - Iter: 15584    training-loss, overall: 0.17439615726470947    training-loss, loss_ce: 0.17439615726470947    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.43922603130340576    training-loss, fake_loss: 0.09919802844524384    
+2026-11-13 16:02:01,908 - INFO - Iter: 15584    training-metric, acc: 0.9225    training-metric, auc: 0.9754623503874357    training-metric, eer: 0.03609344422700586    training-metric, ap: 0.9932177069041848    
+2026-11-13 16:02:39,626 - INFO - Iter: 15884    training-loss, overall: 0.17663997411727905    training-loss, loss_ce: 0.17663997411727905    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4802725911140442    training-loss, fake_loss: 0.10010852664709091    
+2026-11-13 16:02:39,627 - INFO - Iter: 15884    training-metric, acc: 0.9247916666666667    training-metric, auc: 0.9702534654859741    training-metric, eer: 0.03525109702584106    training-metric, ap: 0.9918240800411977    
+2026-11-13 16:03:16,606 - INFO - ===> Test start!
+2026-11-13 16:03:16,614 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 16:03:54,679 - INFO - dataset: FaceForensics++    step: 16181    testing-loss, overall: 0.17890165746212006    testing-loss, loss_ce: 0.17890165746212006    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.4866764545440674    testing-loss, fake_loss: 0.1026073768734932    
+2026-11-13 16:03:54,680 - INFO - dataset: FaceForensics++    step: 16181    testing-metric, acc: 0.9379082043482151    testing-metric, auc: 0.9733546794066406    testing-metric, eer: 0.07594371230734867    testing-metric, ap: 0.9933784825353724    testing-metric, video_auc: 0.9881632653061224    testing-metric, acc_real:0.8273397364306455; acc_fake:0.9655982547407284
+2026-11-13 16:03:54,681 - INFO - ===> Test Done!
+2026-11-13 16:03:54,813 - INFO - Epoch stats: {'epoch': 8, 'train_seconds': 206.18827100205272, 'train_images': 28768, 'train_images_per_second': 139.5229702455461, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 16:03:55,110 - INFO - ===> Epoch[8] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9739538960350872 | 
+=============================================================================================
+2026-11-13 16:03:55,134 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch08.pth
+2026-11-13 16:03:55,135 - INFO - ===> Epoch[9] start!
+2026-11-13 16:03:55,147 - INFO - data_dict saved to logs/val/effort_s1024/train/FaceForensics++/data_dict_train.pickle
+2026-11-13 16:03:56,017 - INFO - Iter: 16182    training-loss, overall: 0.28646934032440186    training-loss, loss_ce: 0.28646934032440186    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5335968732833862    training-loss, fake_loss: 0.09425899386405945    
+2026-11-13 16:03:56,018 - INFO - Iter: 16182    training-metric, acc: 0.8125    training-metric, auc: 0.9682539682539684    training-metric, eer: 0.14285714285714285    training-metric, ap: 0.9765432098765432    
+2026-11-13 16:04:34,826 - INFO - Iter: 16482    training-loss, overall: 0.17890194058418274    training-loss, loss_ce: 0.17890194058418274    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.47601228952407837    training-loss, fake_loss: 0.09797321259975433    
+2026-11-13 16:04:34,827 - INFO - Iter: 16482    training-metric, acc: 0.925    training-metric, auc: 0.9744412280726937    training-metric, eer: 0.03899014778325123    training-metric, ap: 0.9928933822409016    
+2026-11-13 16:05:11,634 - INFO - Iter: 16782    training-loss, overall: 0.18692345917224884    training-loss, loss_ce: 0.18692345917224884    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.5167374610900879    training-loss, fake_loss: 0.10588422417640686    
+2026-11-13 16:05:11,634 - INFO - Iter: 16782    training-metric, acc: 0.9191666666666667    training-metric, auc: 0.9690607505880545    training-metric, eer: 0.0432471964895173    training-metric, ap: 0.9923512324501229    
+2026-11-13 16:05:48,541 - INFO - ===> Test start!
+2026-11-13 16:05:48,553 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 16:06:26,694 - INFO - dataset: FaceForensics++    step: 17080    testing-loss, overall: 0.2183290719985962    testing-loss, loss_ce: 0.2183290719985962    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.19100360572338104    testing-loss, fake_loss: 0.22570712864398956    
+2026-11-13 16:06:26,695 - INFO - dataset: FaceForensics++    step: 17080    testing-metric, acc: 0.9222957859890847    testing-metric, auc: 0.9735267284276423    testing-metric, eer: 0.07527362072816618    testing-metric, ap: 0.9934834091665609    testing-metric, video_auc: 0.988890306122449    testing-metric, acc_real:0.9347777529595711; acc_fake:0.9191698830900039
+2026-11-13 16:06:26,695 - INFO - ===> Test Done!
+2026-11-13 16:06:26,942 - INFO - Iter: 17082    training-loss, overall: 0.15481005609035492    training-loss, loss_ce: 0.15481005609035492    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4149426817893982    training-loss, fake_loss: 0.0901961401104927    
+2026-11-13 16:06:26,943 - INFO - Iter: 17082    training-metric, acc: 0.934375    training-metric, auc: 0.9762451293916808    training-metric, eer: 0.02920361247947455    training-metric, ap: 0.9945146362628385    
+2026-11-13 16:07:04,049 - INFO - Iter: 17382    training-loss, overall: 0.1679036170244217    training-loss, loss_ce: 0.1679036170244217    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.44145286083221436    training-loss, fake_loss: 0.09792383015155792    
+2026-11-13 16:07:04,050 - INFO - Iter: 17382    training-metric, acc: 0.9260416666666667    training-metric, auc: 0.9761340831410037    training-metric, eer: 0.03255066732575383    training-metric, ap: 0.9935092573184414    
+2026-11-13 16:07:41,321 - INFO - Iter: 17682    training-loss, overall: 0.1710933893918991    training-loss, loss_ce: 0.1710933893918991    training-loss, loss_aux: 0.0    training-loss, real_loss: 0.4528925120830536    training-loss, fake_loss: 0.09590956568717957    
+2026-11-13 16:07:41,322 - INFO - Iter: 17682    training-metric, acc: 0.9260416666666667    training-metric, auc: 0.9736325693721883    training-metric, eer: 0.03741555445707696    training-metric, ap: 0.993314570391175    
+2026-11-13 16:08:18,270 - INFO - ===> Test start!
+2026-11-13 16:08:18,278 - INFO - data_dict saved to logs/val/effort_s1024/test/FaceForensics++/data_dict_test.pickle
+2026-11-13 16:08:56,581 - INFO - dataset: FaceForensics++    step: 17979    testing-loss, overall: 0.18736779689788818    testing-loss, loss_ce: 0.18736779689788818    testing-loss, loss_aux: 0.0    testing-loss, real_loss: 0.4776957333087921    testing-loss, fake_loss: 0.11543924361467361    
+2026-11-13 16:08:56,582 - INFO - dataset: FaceForensics++    step: 17979    testing-metric, acc: 0.9380424085174913    testing-metric, auc: 0.973728008289939    testing-metric, eer: 0.07549698458789368    testing-metric, ap: 0.9934911201182909    testing-metric, video_auc: 0.9877933673469387    testing-metric, acc_real:0.8338172883627429; acc_fake:0.9641438720143201
+2026-11-13 16:08:56,582 - INFO - ===> Test Done!
+2026-11-13 16:08:56,710 - INFO - Epoch stats: {'epoch': 9, 'train_seconds': 203.84607120192413, 'train_images': 28768, 'train_images_per_second': 141.1260949518288, 'peak_gpu_memory_gb': 5.395449638366699}
+2026-11-13 16:08:57,009 - INFO - ===> Epoch[9] best so far: 
+================================ Each dataset best metric ================================ 
+| FaceForensics++:  auc=0.9739538960350872 | 
+=============================================================================================
+2026-11-13 16:08:57,033 - INFO - Epoch checkpoint saved to logs/val/effort_s1024/epochs/ckpt_epoch09.pth
+2026-11-13 16:08:57,034 - INFO - run_info: {"run_dir": "logs/val/effort_s1024", "model_name": "effort", "seed": 1024, "selection": "val", "selection_datasets": ["FaceForensics++"], "selection_split": "val", "selected": {"epoch": 8, "iteration": 898, "step": 15282, "value": 0.9739538960350872}, "final_ckpt": "logs/val/effort_s1024/test/FaceForensics++/ckpt_best.pth", "trainable_params": {"total": 303378530, "trainable": 198754, "percent": 0.06551353518655391}, "trainable_breakdown": {"svd_residual": 196704, "replaced_linears": 96, "backbone_total_trainable": 196704}, "epoch_stats": [{"epoch": 0, "train_seconds": 205.27186315498693, "train_images": 28768, "train_images_per_second": 140.14585125229377, "peak_gpu_memory_gb": 5.394534111022949}, {"epoch": 1, "train_seconds": 204.31064159504604, "train_images": 28768, "train_images_per_second": 140.8051963197278, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 2, "train_seconds": 204.12489111698414, "train_images": 28768, "train_images_per_second": 140.93332685974605, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 3, "train_seconds": 204.1600424069802, "train_images": 28768, "train_images_per_second": 140.90906164024398, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 4, "train_seconds": 204.41569469504793, "train_images": 28768, "train_images_per_second": 140.7328338605153, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 5, "train_seconds": 203.49379181799304, "train_images": 28768, "train_images_per_second": 141.3704061582891, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 6, "train_seconds": 203.40167605602255, "train_images": 28768, "train_images_per_second": 141.43442943939402, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 7, "train_seconds": 203.38318691202767, "train_images": 28768, "train_images_per_second": 141.44728695024062, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 8, "train_seconds": 206.18827100205272, "train_images": 28768, "train_images_per_second": 139.5229702455461, "peak_gpu_memory_gb": 5.395449638366699}, {"epoch": 9, "train_seconds": 203.84607120192413, "train_images": 28768, "train_images_per_second": 141.1260949518288, "peak_gpu_memory_gb": 5.395449638366699}], "gpu": "NVIDIA A100-SXM4-40GB", "amp": "bf16", "batch_size": 16}

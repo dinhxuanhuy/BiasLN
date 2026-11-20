@@ -1,0 +1,16 @@
+{
+  "id": "xuanhuydinh/biasln-prep",
+  "title": "biasln-prep",
+  "code_file": "biasln-prep.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [],
+  "dataset_sources": ["xuanhuydinh/deepfakebench", "xuanhuydinh/deepfake40"],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": []
+}

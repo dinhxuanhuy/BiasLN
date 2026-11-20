@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "skills": {
+    "literature-review": {
+      "source": "lingzhi227/agent-research-skills",
+      "sourceType": "github",
+      "skillPath": "skills/literature-review/SKILL.md",
+      "computedHash": "81af527bad15ae61dff7474c15efdb293938d6d0a9c73d5686d4de5e40e6116e"
+    },
+    "scientific-brainstorming": {
+      "source": "K-Dense-AI/scientific-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/scientific-brainstorming/SKILL.md",
+      "computedHash": "9f93ff25f1d40696078583e466e4da84de108404de037b937a28d92edf464c36"
+    }
+  }
+}

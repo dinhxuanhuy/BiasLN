@@ -1,0 +1,102 @@
+{
+  "run_dir": "logs/anchor_val/effort_s2",
+  "model_name": "effort",
+  "seed": 2,
+  "selection": "val",
+  "selection_datasets": [
+    "FaceForensics++"
+  ],
+  "selection_split": "val",
+  "selected": {
+    "epoch": 9,
+    "iteration": 898,
+    "step": 17080,
+    "value": 0.9734024895430866
+  },
+  "final_ckpt": "logs/anchor_val/effort_s2/test/FaceForensics++/ckpt_best.pth",
+  "trainable_params": {
+    "total": 303378530,
+    "trainable": 198754,
+    "percent": 0.06551353518655391
+  },
+  "trainable_breakdown": {
+    "svd_residual": 196704,
+    "replaced_linears": 96,
+    "backbone_total_trainable": 196704
+  },
+  "epoch_stats": [
+    {
+      "epoch": 0,
+      "train_seconds": 204.5325919992174,
+      "train_images": 28768,
+      "train_images_per_second": 140.65240027912068,
+      "peak_gpu_memory_gb": 5.394534111022949
+    },
+    {
+      "epoch": 1,
+      "train_seconds": 204.22553830203833,
+      "train_images": 28768,
+      "train_images_per_second": 140.86387157640252,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 2,
+      "train_seconds": 205.5279560598865,
+      "train_images": 28768,
+      "train_images_per_second": 139.97122606336637,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 3,
+      "train_seconds": 204.0288705871062,
+      "train_images": 28768,
+      "train_images_per_second": 140.9996532217143,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 4,
+      "train_seconds": 204.08208533595462,
+      "train_images": 28768,
+      "train_images_per_second": 140.9628873237103,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 5,
+      "train_seconds": 204.7432482281656,
+      "train_images": 28768,
+      "train_images_per_second": 140.50768584046776,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 6,
+      "train_seconds": 203.39502076989447,
+      "train_images": 28768,
+      "train_images_per_second": 141.439057313728,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 7,
+      "train_seconds": 204.41468115075259,
+      "train_images": 28768,
+      "train_images_per_second": 140.73353165267056,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 8,
+      "train_seconds": 204.7589100254845,
+      "train_images": 28768,
+      "train_images_per_second": 140.4969385528547,
+      "peak_gpu_memory_gb": 5.395449638366699
+    },
+    {
+      "epoch": 9,
+      "train_seconds": 204.98679100014851,
+      "train_images": 28768,
+      "train_images_per_second": 140.34075005339812,
+      "peak_gpu_memory_gb": 5.395449638366699
+    }
+  ],
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "amp": "bf16",
+  "batch_size": 16
+}
