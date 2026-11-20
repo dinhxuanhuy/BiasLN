@@ -1,0 +1,7 @@
+ln_l2-bitfit: D -0.0014 p=0.397 holm=1.000 tost=0.000 | M +0.0059 p=0.020 holm=0.261 tost=0.040 tostH=0.123 | DtostH=0.002
+ln_l2-biasln: D -0.0036 p=0.069 holm=0.693 tost=0.003 | M +0.0062 p=0.003 holm=0.048 tost=0.018 tostH=0.108 | DtostH=0.026
+ln_l2-gend: D -0.0033 p=0.123 holm=0.987 tost=0.007 | M -0.0005 p=0.799 holm=1.000 tost=0.001 tostH=0.016 | DtostH=0.047
+biasln-bitfit: D +0.0022 p=0.082 holm=0.741 tost=0.000 | M -0.0003 p=0.854 holm=1.000 tost=0.000 tostH=0.001 | DtostH=0.001
+gend-biasln: D +0.0003 p=0.909 holm=1.000 tost=0.004 | M +0.0084 p=0.020 holm=0.261 tost=0.269 tostH=0.440 | DtostH=0.029
+gend-bitfit: D +0.0017 p=0.396 holm=1.000 tost=0.003 | M +0.0077 p=0.036 holm=0.396 tost=0.220 tostH=0.440 | DtostH=0.026
+glr3-biasln: D -0.0019 p=0.557 holm=1.000 tost=0.022 | M +0.0033 p=0.286 holm=1.000 tost=0.031 tostH=0.123 | DtostH=0.108

@@ -74,8 +74,26 @@ class Trainer(object):
             f"{self.config['model_name']}_"
             f"{self.config['manualSeed']}_{self.timenow}"
         )
-        self.log_dir = os.path.join(self.config['log_dir'], run_name)
+        self.log_dir = self.config.get('run_dir') or os.path.join(self.config['log_dir'], run_name)
         os.makedirs(self.log_dir, exist_ok=True)
+
+        # Checkpoint selection: only the loader named `selection_key` (or the
+        # 'avg' over all evaluation loaders) may produce ckpt_best.pth. The
+        # legacy behaviour saved one "best" checkpoint per test dataset, i.e.
+        # it selected on every test set (see docs/REBUTTAL.md).
+        self.selection_key = self.config.get('selection_key')
+        self.compact_ckpt = bool(self.config.get('compact_ckpt', True))
+
+        # Mixed precision (optional; 'none' reproduces the paper's fp32 runs).
+        amp = str(self.config.get('amp', 'none')).lower()
+        self.amp_dtype = {'fp16': torch.float16, 'bf16': torch.bfloat16}.get(amp)
+        self.scaler = (
+            torch.cuda.amp.GradScaler()
+            if self.amp_dtype == torch.float16 and torch.cuda.is_available()
+            else None
+        )
+        # Efficiency bookkeeping (Reviewers 1 & 2: training time / memory).
+        self.epoch_stats = []
 
     def get_writer(self, phase, dataset_key, metric_key):
         writer_key = f"{phase}-{dataset_key}-{metric_key}"
@@ -125,12 +143,36 @@ class Trainer(object):
             raise NotImplementedError(
                 "=> no model found at '{}'".format(model_path))
 
+    def _bare_model(self):
+        return self.model.module if isinstance(self.model, DDP) else self.model
+
+    def _ckpt_payload(self, ckpt_info=None):
+        model = self._bare_model()
+        if self.compact_ckpt and hasattr(model, 'trainable_state_dict'):
+            return {
+                'state_dict': model.trainable_state_dict(),
+                'trainable_only': True,
+                'model_name': self.config['model_name'],
+                'ckpt_info': ckpt_info,
+            }
+        return model.state_dict()
+
+    def save_epoch_ckpt(self, epoch):
+        save_dir = os.path.join(self.log_dir, 'epochs')
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, f'ckpt_epoch{epoch:02d}.pth')
+        torch.save(self._ckpt_payload(f'epoch{epoch}'), save_path)
+        self.logger.info(f"Epoch checkpoint saved to {save_path}")
+        return save_path
+
     def save_ckpt(self, phase, dataset_key,ckpt_info=None):
         save_dir = os.path.join(self.log_dir, phase, dataset_key)
         os.makedirs(save_dir, exist_ok=True)
         ckpt_name = f"ckpt_best.pth"
         save_path = os.path.join(save_dir, ckpt_name)
-        if self.config['ddp'] == True:
+        if self.compact_ckpt and hasattr(self._bare_model(), 'trainable_state_dict'):
+            torch.save(self._ckpt_payload(ckpt_info), save_path)
+        elif self.config['ddp'] == True:
             torch.save(self.model.state_dict(), save_path)
         else:
             if 'svdd' in self.config['model_name']:
@@ -193,14 +235,21 @@ class Trainer(object):
             return losses_first, pred_first
         else:
 
-            predictions = self.model(data_dict)
-            if type(self.model) is DDP:
-                losses = self.model.module.get_losses(data_dict, predictions)
+            with torch.autocast('cuda', dtype=self.amp_dtype or torch.float32,
+                                enabled=self.amp_dtype is not None):
+                predictions = self.model(data_dict)
+                if type(self.model) is DDP:
+                    losses = self.model.module.get_losses(data_dict, predictions)
+                else:
+                    losses = self.model.get_losses(data_dict, predictions)
+            self.optimizer.zero_grad(set_to_none=True)
+            if self.scaler is not None:
+                self.scaler.scale(losses['overall']).backward()
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
             else:
-                losses = self.model.get_losses(data_dict, predictions)
-            self.optimizer.zero_grad()
-            losses['overall'].backward()
-            self.optimizer.step()
+                losses['overall'].backward()
+                self.optimizer.step()
             self.after_optimizer_step()
 
 
@@ -237,15 +286,27 @@ class Trainer(object):
         # define training recorder
         train_recorder_loss = defaultdict(Recorder)
         train_recorder_metric = defaultdict(Recorder)
+        train_seconds = 0.0
+        n_train_images = 0
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+        test_best_metric = None
 
         for iteration, data_dict in tqdm(enumerate(train_data_loader),total=len(train_data_loader)):
             self.setTrain()
             # more elegant and more scalable way of moving data to GPU
             for key in data_dict.keys():
                 if data_dict[key]!=None and key!='name':
-                    data_dict[key]=data_dict[key].cuda()
+                    data_dict[key]=data_dict[key].to(device)
 
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            step_start = time.perf_counter()
             losses,predictions=self.train_step(data_dict)
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            train_seconds += time.perf_counter() - step_start
+            n_train_images += int(data_dict['label'].shape[0])
 
             # update learning rate
 
@@ -329,6 +390,18 @@ class Trainer(object):
             # total_elapsed_time = total_end_time - total_start_time
             # print("总花费的时间: {:.2f} 秒".format(total_elapsed_time))
             step_cnt += 1
+        stats = {
+            'epoch': epoch,
+            'train_seconds': train_seconds,
+            'train_images': n_train_images,
+            'train_images_per_second': n_train_images / max(train_seconds, 1e-9),
+            'peak_gpu_memory_gb': (
+                torch.cuda.max_memory_allocated() / 1024 ** 3
+                if torch.cuda.is_available() else 0.0
+            ),
+        }
+        self.epoch_stats.append(stats)
+        self.logger.info(f"Epoch stats: {stats}")
         return test_best_metric
 
     def get_respect_acc(self, prob, label):
@@ -355,7 +428,7 @@ class Trainer(object):
             # move data to GPU elegantly
             for key in data_dict.keys():
                 if data_dict[key]!=None:
-                    data_dict[key]=data_dict[key].cuda()
+                    data_dict[key]=data_dict[key].to(device)
             # model forward without considering gradient computation
             predictions = self.inference(data_dict)
             label_lists += list(data_dict['label'].cpu().detach().numpy())
@@ -387,8 +460,10 @@ class Trainer(object):
             if key == 'avg':
                 self.best_metrics_all_time[key]['dataset_dict'] = metric_one_dataset['dataset_dict']
             # Save checkpoint, feature, and metrics if specified in config
-            if self.config['save_ckpt'] and key not in FFpp_pool:
+            if self.config['save_ckpt'] and key == self.selection_key:
                 self.save_ckpt('test', key, f"{epoch}+{iteration}")
+                self.best_selection = {'epoch': epoch, 'iteration': iteration,
+                                       'step': step, 'value': metric_one_dataset[self.metric_scoring]}
             self.save_metrics('test', metric_one_dataset, key)
         if losses_one_dataset_recorder is not None:
             # info for each dataset
@@ -463,5 +538,9 @@ class Trainer(object):
 
     @torch.no_grad()
     def inference(self, data_dict):
-        predictions = self.model(data_dict, inference=True)
+        with torch.autocast('cuda', dtype=self.amp_dtype or torch.float32,
+                            enabled=self.amp_dtype is not None):
+            predictions = self.model(data_dict, inference=True)
+        predictions['prob'] = predictions['prob'].float()
+        predictions['feat'] = predictions['feat'].float()
         return predictions

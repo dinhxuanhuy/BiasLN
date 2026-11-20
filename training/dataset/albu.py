@@ -3,7 +3,11 @@ import random
 import cv2
 import numpy as np
 from albumentations import DualTransform, ImageOnlyTransform
-from albumentations.augmentations.crops.functional import crop
+try:  # albumentations 1.x
+    from albumentations.augmentations.crops.functional import crop
+except ImportError:  # albumentations 2.x removed the public helper
+    def crop(img, x_min, y_min, x_max, y_max):
+        return img[y_min:y_max, x_min:x_max]
 
 
 def isotropically_resize_image(img, size, interpolation_down=cv2.INTER_AREA, interpolation_up=cv2.INTER_CUBIC):
@@ -26,7 +30,7 @@ def isotropically_resize_image(img, size, interpolation_down=cv2.INTER_AREA, int
 class IsotropicResize(DualTransform):
     def __init__(self, max_side, interpolation_down=cv2.INTER_AREA, interpolation_up=cv2.INTER_CUBIC,
                  always_apply=False, p=1):
-        super(IsotropicResize, self).__init__(always_apply, p)
+        super(IsotropicResize, self).__init__(p=p)
         self.max_side = max_side
         self.interpolation_down = interpolation_down
         self.interpolation_up = interpolation_up
@@ -44,7 +48,7 @@ class IsotropicResize(DualTransform):
 
 class Resize4xAndBack(ImageOnlyTransform):
     def __init__(self, always_apply=False, p=0.5):
-        super(Resize4xAndBack, self).__init__(always_apply, p)
+        super(Resize4xAndBack, self).__init__(p=p)
 
     def apply(self, img, **params):
         h, w = img.shape[:2]
@@ -58,7 +62,7 @@ class Resize4xAndBack(ImageOnlyTransform):
 class RandomSizedCropNonEmptyMaskIfExists(DualTransform):
 
     def __init__(self, min_max_height, w2h_ratio=[0.7, 1.3], always_apply=False, p=0.5):
-        super(RandomSizedCropNonEmptyMaskIfExists, self).__init__(always_apply, p)
+        super(RandomSizedCropNonEmptyMaskIfExists, self).__init__(p=p)
 
         self.min_max_height = min_max_height
         self.w2h_ratio = w2h_ratio

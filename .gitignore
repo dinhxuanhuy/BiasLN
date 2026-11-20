@@ -9,3 +9,10 @@
 # Ignore datasets and logs
 datasets/rgb/
 logs/
+
+# experiment outputs
+results/
+.pytest_cache/
+results_paper/
+results_drive/
+kaggle/_out/

@@ -1,0 +1,37 @@
+arxiv_id,first_version_date,title,branch
+2303.00917,2023-03-02,Enhancing General Face Forgery Detection via Vision Transformer with Low-Rank Adaptation,Reparameterization
+2306.00863,2023-06-01,DeepFake-Adapter: Dual-Level Adapter for DeepFake Detection,Additive
+2306.17075,2023-06-29,Detect Any Deepfakes: Segment Anything Meets Face Forgery Detection and Localization,Additive
+2309.04795,2023-09-09,Latent Spatiotemporal Adaptation for Generalized Face Forgery Video Detection,Additive
+2309.11092,2023-09-20,Generalized Face Forgery Detection via Adaptive Learning for Pre-trained Vision Transformer,Additive
+2310.17419,2023-10-26,AntifakePrompt: Prompt-Tuned Vision-Language Models are Fake Image Detectors,Additive (prompt)
+2401.17699,2024-01-31,Unified Physical-Digital Face Attack Detection,Additive (prompt)
+2402.12927,2024-02-20,CLIPping the Deception: Adapting Vision-Language Models for Universal Deepfake Detection,Additive (prompt)
+2404.05583,2024-04-08,Towards More General Video-based Deepfake Detection through Facial Component Guided Adaptation for Foundation Model,Additive
+2405.00355,2024-05-01,Exploring Self-Supervised Vision Transformers for Deepfake Detection: A Comparative Analysis,Selective
+2407.21554,2024-07-31,Conditioned Prompt-Optimization for Continual Deepfake Detection,Additive (prompt)
+2408.08412,2024-08-15,Penny-Wise and Pound-Foolish in Deepfake Detection,Additive (prompt)
+2408.09647,2024-08-19,C2P-CLIP: Injecting Category Common Prompt in CLIP to Enhance Generalization in Deepfake Detection,Additive (prompt)
+2408.12791,2024-08-23,Open-Set Deepfake Detection: A Parameter-Efficient Adaptation Method with Forgery Style Mixture,Hybrid
+2409.02664,2024-09-04,Standing on the Shoulders of Giants: Reprogramming Visual-Language Model for General Deepfake Detection,Additive (prompt)
+2409.09724,2024-09-15,MFCLIP: Multi-modal Fine-grained CLIP for Generalizable Diffusion Face Forgery Detection,Additive (prompt)
+2411.19117,2024-11-28,Understanding and Improving Training-Free AI-Generated Image Detections with Vision Foundation Models,Selective (training-free)
+2411.19715,2024-11-29,Forensics Adapter: Unleashing CLIP for Generalizable Face Forgery Detection,Additive
+2503.19683,2025-03-25,Unlocking the Hidden Potential of CLIP in Generalizable Deepfake Detection,Selective
+2504.00454,2025-04-01,FA^{3}-CLIP: Frequency-Aware Cues Fusion and Attack-Agnostic Prompt Learning for Unified Face Attack Detection,Additive (prompt)
+2507.20913,2025-07-28,HAMLET-FFD: Hierarchical Adaptive Multi-modal Learning Embeddings Transformation for Face Forgery Detection,Hybrid
+2508.06248,2025-08-08,Deepfake Detection that Generalizes Across Benchmarks,Hybrid
+2510.10663,2025-10-12,"Scalable Face Security Vision Foundation Model for Deepfake, Diffusion, and Spoofing Detection",Additive
+2511.12107,2025-11-15,Fine-Grained DINO Tuning with Dual Supervision for Face Forgery Detection,Hybrid
+2601.11915,2026-01-17,Low-rank Orthogonal Subspace Intervention for Generalizable Face Forgery Detection,Reparameterization
+2603.01450,2026-03-02,Deepfake Forensics Adapter: A Dual-Stream Network for Generalizable Deepfake Detection,Additive
+2603.24454,2026-03-25,Unleashing Vision-Language Semantics for Deepfake Video Detection,Additive (prompt)
+2603.29295,2026-03-31,GazeCLIP: Gaze-Guided CLIP with Adaptive-Enhanced Fine-Grained Language Prompt for Deepfake Attribution and Detection,Hybrid
+2604.17307,2026-04-19,Generalizable Face Forgery Detection via Separable Prompt Learning,Additive (prompt)
+2605.24965,2026-05-24,Cross-Domain Generalization Limits of Vision Foundation Models in Facial Deepfake Detection,Selective (probe)
+2607.18770,2026-07-21,GLID: Gated Local Intrinsic Dimension Repairs the Blind Spots of Face-Forgery Detectors,Selective (training-free)
+2608.17700,2026-08-18,Environment-Invariant Subspace Learning for Generalizable Deepfake Detection,Reparameterization
+2609.14437,2026-09-13,Lightweight Generalized DeepFake Face Detection with WAVIE: Wavelet Augmented Vision Intermediate Embeddings,Selective (probe)
+2609.34720,2026-09-28,DBCF: Dual-Branch Complementary Fusion of Foundation Models for Generalized Deepfake Detection,Hybrid
+2610.16879,2026-10-12,EviStress: Evidence Stress Learning for Generalizable Face Forgery Detection with Textual Explanations,Reparameterization
+2610.37874,2026-10-27,PairCLIP-SWA: Similarity-Guided Balancing and Stochastic Weight Averaging for Generalized Deepfake Image Detection with OpenCLIP,Selective

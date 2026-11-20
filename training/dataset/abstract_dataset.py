@@ -25,6 +25,47 @@ from torchvision import transforms as T
 import albumentations as A
 from .albu import IsotropicResize
 
+def _image_compression(lower, upper, p):
+    """JPEG compression augmentation for albumentations 1.x and 2.x."""
+    try:
+        return A.ImageCompression(quality_range=(lower, upper), p=p)
+    except Exception:  # 1.x: TypeError / pydantic ValidationError on quality_range
+        return A.ImageCompression(quality_lower=lower, quality_upper=upper, p=p)
+
+
+def apply_perturbation(image, spec, key=""):
+    """Deterministic test-time corruption of an RGB uint8 image (robustness evaluation).
+
+    spec: "<kind>:<level>" with kind in
+      jpeg  (quality, e.g. 50)       blur (Gaussian sigma, e.g. 2)
+      down  (scale, e.g. 0.5; down- then up-sampled)   noise (Gaussian std in [0,1], e.g. 0.05)
+      bright (additive shift in [0,1], e.g. 0.2)
+    The random noise is seeded from `key` (the frame path) so every model sees the same image.
+    """
+    import cv2
+    import zlib
+    kind, _, level = str(spec).partition(":")
+    lv = float(level)
+    img = np.ascontiguousarray(image)
+    if kind == "jpeg":
+        ok, buf = cv2.imencode(".jpg", img[:, :, ::-1], [int(cv2.IMWRITE_JPEG_QUALITY), int(lv)])
+        return cv2.imdecode(buf, cv2.IMREAD_COLOR)[:, :, ::-1].copy()
+    if kind == "blur":
+        return cv2.GaussianBlur(img, (0, 0), sigmaX=lv)
+    if kind == "down":
+        h, w = img.shape[:2]
+        small = cv2.resize(img, (max(1, int(w * lv)), max(1, int(h * lv))), interpolation=cv2.INTER_AREA)
+        return cv2.resize(small, (w, h), interpolation=cv2.INTER_LINEAR)
+    if kind == "noise":
+        rng = np.random.default_rng(zlib.crc32(str(key).encode()))
+        out = img.astype(np.float32) / 255.0 + rng.normal(0.0, lv, img.shape).astype(np.float32)
+        return (np.clip(out, 0, 1) * 255).round().astype(np.uint8)
+    if kind == "bright":
+        out = img.astype(np.float32) / 255.0 + lv
+        return (np.clip(out, 0, 1) * 255).round().astype(np.uint8)
+    raise ValueError(f"unknown test_perturb {spec!r}")
+
+
 FFpp_pool=['FaceForensics++','FaceShifter','DeepFakeDetection','FF-DF','FF-F2F','FF-FS','FF-NT']
 
 def all_in_pool(inputs, pool):
@@ -42,6 +83,10 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         self.mode = mode
         self.compression = config['compression']
         self.frame_num = config['frame_num'][mode]
+        # JSON split to read ('train' / 'val' / 'test'). Defaults to the mode, but
+        # a validation loader runs in 'test' mode (no augmentation, test frame
+        # count) while reading the 'val' split of a dataset.
+        self.split = config.get('data_split') or mode
 
         self.video_level = config.get('video_mode', False)
         self.clip_size = config.get('clip_size', None)
@@ -131,7 +176,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
                 A.FancyPCA(),
                 A.HueSaturationValue()
             ], p=float(self.config['data_aug'].get('brightness_prob', 0.5))),
-            A.ImageCompression(quality_lower=self.config['data_aug']['quality_lower'], quality_upper=self.config['data_aug']['quality_upper'], p=0.5)
+            _image_compression(self.config['data_aug']['quality_lower'], self.config['data_aug']['quality_upper'], p=0.5)
         ],
             keypoint_params=self._keypoint_params()
         )
@@ -197,7 +242,10 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             cp = 'c40'
         
         for label in dataset_info[dataset_name]:
-            sub_dataset_info = dataset_info[dataset_name][label][self.mode]
+            if self.split not in dataset_info[dataset_name][label]:
+                # e.g. a test-only dataset, or a fake type absent from this split
+                continue
+            sub_dataset_info = dataset_info[dataset_name][label][self.split]
             if cp == None and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection','FaceShifter']:
                 sub_dataset_info = sub_dataset_info[self.compression]
             elif cp == 'c40' and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection','FaceShifter']:
@@ -508,7 +556,10 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
                 image_trans, landmarks_trans, mask_trans = self.data_aug(image, landmarks, mask, augmentation_seed)
             else:
                 image_trans, landmarks_trans, mask_trans = deepcopy(image), deepcopy(landmarks), deepcopy(mask)
-            
+                spec = self.config.get('test_perturb')  # robustness eval, e.g. "jpeg:50"
+                if spec and self.mode != 'train':
+                    image_trans = apply_perturbation(image_trans, spec, image_path)
+
             if not no_norm:
                 image_trans = self.normalize(self.to_tensor(image_trans))
                 if strong_image_trans is not None:

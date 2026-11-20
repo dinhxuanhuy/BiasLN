@@ -42,7 +42,10 @@ def get_test_metrics(y_pred, y_true, img_names):
                 parts = s.split('\\')
             else:
                 parts = s.split('/')
-            a = parts[-2]
+            # Group frames by their full parent directory. The original code
+            # used only the last folder name (parts[-2]), which merges a real
+            # and a fake video that happen to share a folder name.
+            a = '/'.join(parts[:-1])
             b = parts[-1]
 
             if a not in result_dict:

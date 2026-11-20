@@ -1,4 +1,10 @@
-"""BiasLoraAsy pretrained evaluation with optional feature dump for t-SNE."""
+"""Evaluate a trained detector; writes metrics + per-video scores.
+
+Outputs (under --out_dir):
+  metrics.json                  frame/video AUC, EER, AP, ACC per dataset
+  scores/<dataset>.npz          per-video mean score + label (for DeLong /
+                                bootstrap significance tests in tools/stats.py)
+"""
 
 import argparse
 from collections import OrderedDict
@@ -24,18 +30,26 @@ DETECTOR = None
 DeepfakeAbstractBaseDataset = None
 
 
-parser = argparse.ArgumentParser(description="BiasLoraAsy test + optional feature dump for t-SNE")
+parser = argparse.ArgumentParser(description="Evaluate a detector checkpoint")
 parser.add_argument(
     "--detector_path",
     type=str,
-    default="training/config/detector/BiasLoraAsy.yaml",
+    default="training/config/detector/BiasLN.yaml",
     help="path to detector YAML file",
 )
 parser.add_argument("--test_dataset", nargs="+", default=None, help="list of test dataset names")
 parser.add_argument("--weights_path", type=str, default=None, help="path to pretrained weights .pth")
 parser.add_argument("--save_feat", action="store_true", default=False, help="save feature pkl for t-SNE")
 parser.add_argument("--feat_out_dir", type=str, default="tsne_pkls", help="output directory for tsne_dict_*.pkl")
+parser.add_argument("--pretrained", action="store_true", default=False,
+                    help="evaluate the encoder as initialised (no --weights_path); for feature analysis")
 parser.add_argument("--max_samples", type=int, default=None, help="optional cap on samples per dataset")
+parser.add_argument("--out_dir", type=str, default=None, help="where to write metrics.json and scores/")
+parser.add_argument("--rgb_dir", type=str, default=None)
+parser.add_argument("--json_dir", type=str, default=None)
+parser.add_argument("--split", type=str, default="test", help="JSON split to evaluate")
+parser.add_argument("--amp", type=str, default=None, choices=["none", "fp16", "bf16"])
+parser.add_argument("--opts", nargs="*", default=[], help="config overrides key=value")
 parser.add_argument(
     "--allow_partial_load",
     action="store_true",
@@ -100,9 +114,17 @@ def prepare_testing_data(config):
     }
 
 
+AMP_DTYPE = None
+
+
 @torch.no_grad()
 def inference(model, data_dict):
-    return model(data_dict, inference=True)
+    with torch.autocast(device.type, dtype=AMP_DTYPE or torch.float32,
+                        enabled=AMP_DTYPE is not None and device.type == "cuda"):
+        out = model(data_dict, inference=True)
+    out["prob"] = out["prob"].float()
+    out["feat"] = out["feat"].float()
+    return out
 
 
 def _move_batch_to_device(data_dict):
@@ -267,7 +289,26 @@ def load_config(detector_path):
     config.setdefault("workers", 4)
     config.setdefault("test_batchSize", 64)
     config.setdefault("metric_scoring", "auc")
+    if args.rgb_dir:
+        config["rgb_dir"] = args.rgb_dir
+    if args.json_dir:
+        config["dataset_json_folder"] = args.json_dir
+    config["data_split"] = args.split
+    from config_utils import apply_overrides
+    apply_overrides(config, args.opts)
     return config
+
+
+def video_scores(img_names, prob, label):
+    """Mean frame score per video; video key = parent directory of the frame."""
+    groups = OrderedDict()
+    for name, p, y in zip(img_names, prob, label):
+        key = os.path.dirname(str(name).replace("\\", "/"))
+        groups.setdefault(key, []).append((float(p), int(y)))
+    keys = list(groups.keys())
+    scores = np.array([np.mean([p for p, _ in groups[k]]) for k in keys])
+    labels = np.array([int(round(np.mean([y for _, y in groups[k]]))) for k in keys])
+    return keys, scores, labels
 
 
 def resolve_device(config):
@@ -303,6 +344,20 @@ def load_checkpoint(model, weights_path, allow_partial_load=False):
     )
 
     msg = model.load_state_dict(normalized_state_dict, strict=False)
+    trainable_only = isinstance(checkpoint, dict) and checkpoint.get("trainable_only", False)
+    if trainable_only:
+        # Compact checkpoints store only trained tensors; every missing key must
+        # be a frozen parameter/buffer that comes from the pretrained backbone.
+        trainable = {n for n, p in model.named_parameters() if p.requires_grad}
+        missing_trainable = [k for k in msg.missing_keys if k in trainable]
+        if missing_trainable or msg.unexpected_keys:
+            raise RuntimeError(
+                f"Compact checkpoint mismatch: missing trainable={missing_trainable[:5]}, "
+                f"unexpected={msg.unexpected_keys[:5]}"
+            )
+        print(f"===> Compact checkpoint: {len(normalized_state_dict)} trained tensors loaded; "
+              f"{len(msg.missing_keys)} frozen tensors kept from the pretrained backbone.")
+        return
     print("===> Load checkpoint done!")
     print(f"     Missing keys: {len(msg.missing_keys)}")
     print(f"     Unexpected keys: {len(msg.unexpected_keys)}")
@@ -332,6 +387,8 @@ def main():
     if "model_name" not in config:
         raise ValueError("YAML must contain config['model_name'] (e.g., bias_lora_asy).")
 
+    global AMP_DTYPE
+    AMP_DTYPE = {"fp16": torch.float16, "bf16": torch.bfloat16}.get(args.amp or config.get("amp", "none"))
     device = resolve_device(config)
     print(f"===> Using device: {device}")
 
@@ -343,7 +400,8 @@ def main():
 
     model_class = DETECTOR[config["model_name"]]
     model = model_class(config).to(device)
-    load_checkpoint(model, args.weights_path, allow_partial_load=args.allow_partial_load)
+    if not args.pretrained:
+        load_checkpoint(model, args.weights_path, allow_partial_load=args.allow_partial_load)
 
     model.eval()
     all_metrics = {}
@@ -373,6 +431,21 @@ def main():
             img_names=img_names_for_metric,
         )
         all_metrics[dataset_name] = metric_one_dataset
+        if args.out_dir:
+            from sklearn.metrics import roc_auc_score
+            keys, v_scores, v_labels = video_scores(img_names_for_metric, pred_prob, label_bin)
+            os.makedirs(os.path.join(args.out_dir, "scores"), exist_ok=True)
+            np.savez_compressed(
+                os.path.join(args.out_dir, "scores", f"{dataset_name}.npz"),
+                video=np.array(keys), score=v_scores, label=v_labels,
+                frame_score=pred_prob.astype(np.float32), frame_label=label_bin.astype(np.int8),
+                **({"frame_feat": feat.astype(np.float16),
+                    "frame_name": np.array([str(n) for n in img_names_for_metric])}
+                   if args.save_feat else {}),
+            )
+            metric_one_dataset["video_auc_dir"] = float(roc_auc_score(v_labels, v_scores))
+            metric_one_dataset["n_videos"] = int(len(keys))
+            metric_one_dataset["n_frames"] = int(len(pred_prob))
 
         for key, value in metric_one_dataset.items():
             if key in ["pred", "label", "dataset_dict"]:
@@ -401,6 +474,16 @@ def main():
                 img_names=(img_names_for_metric if isinstance(img_names_for_metric, list) else []),
             )
 
+    if args.out_dir:
+        from config_utils import dump_json
+        summary = {
+            name: {k: float(v) for k, v in m.items() if k not in ("pred", "label", "dataset_dict")}
+            for name, m in all_metrics.items()
+        }
+        dump_json({"weights_path": args.weights_path, "detector_path": args.detector_path,
+                   "split": args.split, "metrics": summary},
+                  os.path.join(args.out_dir, "metrics.json"))
+        print(f"===> Metrics written to {os.path.join(args.out_dir, 'metrics.json')}")
     print("\n===> Test Done!")
     if args.save_feat:
         print(f"===> Feature pkls saved under: {os.path.abspath(args.feat_out_dir)}")

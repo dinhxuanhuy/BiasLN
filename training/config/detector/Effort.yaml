@@ -1,0 +1,94 @@
+# Effort baseline (Yan et al., ICML 2025) re-run under the BiasLN protocol:
+# rank-1 SVD residual of every attention projection (~0.19M params), raw CLS feature.
+# Hyper-parameters follow the reference implementation (effort.yaml).
+model_name: effort
+backbone_name: vit
+clip_model_name: openai/clip-vit-large-patch14
+pretrained: null
+
+# ---- adaptation -----------------------------------------------------------
+tuning_mode: effort
+last_k_blocks: 0             # >0 also unfreezes full last-k blocks (not PEFT)
+lora_rank: 8                 # only for tuning_mode=lora
+lora_alpha: 16.0
+lora_dropout: 0.0
+lora_targets: [q_proj, v_proj]
+backbone_lr: null
+effort_keep_rank: 1023       # keep top-1023 singular directions frozen
+effort_orth_lambda: 0.0      # orthogonality regulariser (off in the reference code)
+
+# ---- head / objective -----------------------------------------------------
+feature_dim: 1024
+l2_norm: false
+normalize_eps: 0.000001
+weight_real: 1.0             # w_fake : w_real = 2 : 1
+weight_fake: 1.0
+label_smoothing: 0.0
+aux_loss: none               # none | asym_supcon | gend
+lambda_aux: 0.0
+
+# ---- checkpoint selection (see training/train.py) ------------------------
+selection: val               # val | last | test_oracle
+val_dataset: [FaceForensics++]
+val_split: val
+metric_scoring: auc
+save_every_epoch: true
+compact_ckpt: true
+
+# ---- data ---------------------------------------------------------------
+all_dataset: [FaceForensics++, FF-F2F, FF-DF, FF-FS, FF-NT, FaceShifter, DeepFakeDetection,
+              Celeb-DF-v1, Celeb-DF-v2, DFDCP, DFDC, DeeperForensics-1.0, UADFV]
+train_dataset: [FaceForensics++]
+test_dataset: [Celeb-DF-v2, DeepFakeDetection, DFDC, DFDCP, UADFV]
+compression: c23
+train_batchSize: 16
+test_batchSize: 128
+workers: 8
+frame_num:
+  train: 8
+  test: 32
+resolution: 224
+with_mask: false
+with_landmark: false
+use_consistency_views: false
+
+use_data_augmentation: true
+data_aug:
+  flip_prob: 0.5
+  rotate_prob: 0.5
+  rotate_limit: [-10, 10]
+  blur_prob: 0.5
+  blur_limit: [3, 7]
+  brightness_prob: 0.5
+  brightness_limit: [-0.1, 0.1]
+  contrast_limit: [-0.1, 0.1]
+  quality_lower: 40
+  quality_upper: 100
+
+mean: [0.48145466, 0.4578275, 0.40821073]
+std: [0.26862954, 0.26130258, 0.27577711]
+
+# ---- optimisation -------------------------------------------------------
+optimizer:
+  type: adam
+  adam:
+    lr: 0.0002
+    beta1: 0.9
+    beta2: 0.999
+    eps: 0.00000001
+    weight_decay: 0.0005
+    amsgrad: false
+lr_scheduler: null
+scheduler_step_per_epoch: true
+lr_T_max: 10
+lr_eta_min: 0.00001
+nEpochs: 10
+start_epoch: 0
+manualSeed: 1024
+amp: none                    # none | fp16 | bf16
+save_ckpt: true
+save_feat: false
+
+ngpu: 1
+cuda: true
+cudnn: true
